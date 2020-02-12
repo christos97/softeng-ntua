@@ -20,6 +20,7 @@ install:
 scripts :
      - cd back-end && npm run test
 
+     
 deploy :
   provider: pages
   cleanup : true
