@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const credentials = require('../config/credentials')
 
+
 module.exports = (req, res, next) => {
     try {
         const token =  req.headers['x-observatory-auth'];
