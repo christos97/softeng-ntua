@@ -9,7 +9,6 @@ cache:
 env : 
     - NODE_ENV=development TEST_DB_NAME=energyTest
     
-
 services :
   - mongodb
 
