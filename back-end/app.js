@@ -13,12 +13,12 @@ const cors              =   require('cors')
 const session           =   require('express-session')
 const MongoStore        =   require('connect-mongo')(session);
 const rateLimit         =   require("express-rate-limit");
-const config = require("dotenv").config({path: '/home/xsrm/Desktop/TL19-12-master/back-end/config/.env'})
-//const env =(process.env.NODE_ENV)?process.env.NODE_ENV:'default'
-//const port = (env === 'default')?3000:5000 
+const config = require("dotenv").config({path: '../back-end/config/.env'})
+
 /*---------------------------------------------------------------------------------------------------*/
 /*                                  CONNECT TO DB                                                    */
 /*---------------------------------------------------------------------------------------------------*/
+
 const link =   credentials.database
 let URL =''
 //console.log(process.env.TEST_DB_NAME)
@@ -63,16 +63,17 @@ MongoClient.connect(URL,
 
 
 //  Add bodyParser middleware to parse POST request body
-app.use(bodyParser.urlencoded({extended:false}));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({limit: '300mb' ,extended:true, parameterLimit: Infinity}));
+app.use(bodyParser.json({limit : '300mb'}));
 app.use(cors())
+//app.use(bodyParser({limit : '50mb'}))
 app.use(cookieParser());
 app.use(session({
     ...credentials.session_options,
     store: new MongoStore({ mongooseConnection:mongoose.connection })
 }));
-app.use( rateLimit({ ...credentials.limiter_all }) );   // limit requests : hourly + daily
-app.use( rateLimit({ ...credentials.limiter_all_daily }) );
+//app.use( rateLimit({ ...credentials.limiter_all }) );   // limit requests : hourly + daily
+//app.use( rateLimit({ ...credentials.limiter_all_daily }) );
 
 
 /*---------------------------------------------------------------------------------------------------*/

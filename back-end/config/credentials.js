@@ -11,7 +11,7 @@ module.exports = {
     },
     admin_user: {
         username: "admin",
-        password: "admin",
+        password: "321nimda",
         email: "admin@admin.com"
     },
    // One_hour :60 * 60 * 1000,       //counts milliseconds   

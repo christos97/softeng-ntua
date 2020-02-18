@@ -6,6 +6,26 @@ const User          = require("../models/user");
 const credentials   = require('../config/credentials')
 const  isNullOrUndefined = require( 'util')
 const fs = require('fs')
+const csvtojson     =  require('csvtojson')
+
+
+exports.add_csv = (req,res,next ) => {
+
+  let collection  = db.collection(req.params.collection)
+  let jsonArray = req.body
+  let jsonChunks =[]
+  
+  while(jsonArray.length > 0){
+    jsonChunks.push(jsonArray.splice(0,1500))  
+  }
+  
+  // Bulk Onordered Insert
+  for (let chunk in jsonChunks){
+    collection.insertMany(jsonChunks[chunk],{ordered: false})
+  } 
+  
+  return res.status(200).send()
+}
 
 
 exports.user_signup = (req, res, next) => {
@@ -16,7 +36,7 @@ exports.user_signup = (req, res, next) => {
     .exec()
     .then(user => {
       if (user.length >= 1) {
-        //console.log('here1')
+        
         return res.status(400).json({
           message: "Mail exists"
         });
@@ -46,9 +66,8 @@ exports.user_signup = (req, res, next) => {
                 });
               })
               .catch(err => {
-                console.log(err);
-                res.status(500).json({
-                  error: err
+                res.status(400).json({
+                  message: 'Username exists'
                 });
               });
           }
@@ -58,6 +77,7 @@ exports.user_signup = (req, res, next) => {
 };
 
 exports.user_login = (req, res, next) => {
+
   User.find({ username: req.body.username })
     .exec()
     .then(user => {
@@ -117,17 +137,18 @@ exports.user_login = (req, res, next) => {
     });
 };
 exports.find_user = (req ,res , next) => {
+  console.log(req.protocol)
+
   User.find({username : req.params.userId})
       .exec()
       .then(result => {
         let omfg = JSON.stringify(result)
         if (omfg!= '[]'){
           res.status(200).json({
-          //message : 'user found',
-          username : result[0].username,
-          email : result[0].email,
-          api_key : result[0].api_key,
-          quota : result[0].quota
+            username : result[0].username,
+            email : result[0].email,
+            api_key : result[0].api_key,
+            quota : result[0].quota
         })
       }else return res.status(403).send()
       
@@ -139,49 +160,58 @@ exports.find_user = (req ,res , next) => {
         });
       })
 }
-exports.user_delete = (req, res, next) => {
-  User.remove({ _id: req.params.userId })
-    .exec()
-    .then(result => {
-      res.status(200).json({
-        message: "User deleted"
-      });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json({
-        error: err
-      });
-    });
-};
+
 exports.user_logout = (req, res ,next) => {
-   fs.writeFileSync('/home/xsrm/Desktop/TL19-12-master/back-end/config/limit.txt','','utf-8')
-   res.status(200).send()
-  }
-
-
-
-exports.user_patch = (req, res, next) => {
-  User.find({ username: req.params.userId })
-  .then(user => {
-    if (user.length == 0 ) {
-      return res.status(400).json({
-        message: "User Does not exist"
-      });
+  
+  const token =  req.headers['x-observatory-auth'];
+  const decoded = jwt.verify(token, credentials.secret);
+  let update_quota = fs.readFileSync('/home/xsrm/Desktop/softeng-ntua-master/back-end/config/limit.txt')
+  fs.writeFileSync('../back-end/config/limit.txt','','utf-8')
+  
+  User.findOneAndUpdate({ 
+    username: decoded.username 
+  },
+  {
+    $set: {
+      quota : update_quota
     }
-    else {
-      let email = req.body.email; // {last_name : "smith", age: 44}
-      let username = req.body.userId;
-      db.users.update({_id  : ObjectId(id)}, {$set: updateObject});
+  },
+  {
+    new: true
+  },(err,doc) => {
+      console.log(doc)
+      if (err) res.status(400).send()
+      else return res.status(200).send()
+      })
+    }
+
+
+
+exports.user_put = (req, res, next) => {
+  bcrypt.hash(req.body.password, 10, (err, hash) => {
+    if (err) {
+      return res.status(500).json({
+        error: "hash error"
+      })
+    }else {
+      
+    User.findOneAndUpdate({ 
+      username: req.params.userId 
+    },
+    {
+      $set: {
+        email: req.body.email,
+        quota : req.body.quota,
+        password : hash
+      }
+    },
+    {
+      new: true
+    },(err,doc) => {
+        if (err) return res.status(403).send()
+        else return res.status(200).send()
+      })
+    }
+  })
 }
-})}
 
-/*
-
-jwt-blacklist cannot be installed for unkown reason :(
-
-exports.logout = (req,res,next) => {
-      const token =  req.headers['x-observatory-auth'];
-      jwtBlacklist.blacklist(token);
-}
-*/

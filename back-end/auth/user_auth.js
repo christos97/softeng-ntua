@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
                 401: 'Auth failed',
                 Details: 'Provide a valid api key' })
         }
-      let limit = fs.readFileSync('/home/xsrm/Desktop/TL19-12-master/back-end/config/limit.txt','utf-8')
+      let limit = fs.readFileSync('../back-end/config/limit.txt','utf-8')
       if (limit != ""){
         if (limit == '0') {
             return res.status(402).json({
@@ -21,7 +21,7 @@ module.exports = (req, res, next) => {
             })
         }
         let q= parseInt(limit)
-        fs.writeFileSync('/home/xsrm/Desktop/TL19-12-master/back-end/config/limit.txt',--q ,'utf-8')
+        fs.writeFileSync('../back-end/config/limit.txt',--q ,'utf-8')
       }
     next();
     } 

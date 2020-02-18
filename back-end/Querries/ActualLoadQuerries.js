@@ -61,14 +61,15 @@ module.exports ={
                 AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
                 MapCode:'$Map_Code.MapCodeText',
                 ResolutionCode : '$resolution_codes.ResolutionCodeText',
-                Year :   { $toString: "$Year" },
-                Month :  { $toString: "$Month" },
-                Day :    { $toString: "$Day" },
-                DateTimeUTC: '$DateTime',
-                ActualTotalLoadValue: { $toString: "$TotalLoadValue" },
-                UpdateTimeUTC: '$UpdateTime'
+                Year :   { $toInt : "$Year" } ,
+                Month :   { $toInt : "$Month"} ,
+                Day :     { $toInt :"$Day"} ,
+                DateTimeUTC:  { $toDate : '$DateTime'  },
+                ActualTotalLoadValue:  { $toDouble : "$TotalLoadValue"  } ,
+                UpdateTimeUTC: {  $toDate : '$UpdateTime' }
+                }
               }
-            },
+,
             {
               $sort: {
                 'DateTime': 1
@@ -85,7 +86,12 @@ module.exports ={
               AreaName: _AreaName,
               Month: _Month,
               Year: _Year
-            }}, {$group: {
+            }},{
+              $set : {
+                TotalLoadValue1 : {$toDouble : '$TotalLoadValue'}
+              }
+            }, 
+            {$group: {
               _id: {
                 Day:"$Day",
                 Year:"$Year",
@@ -96,8 +102,9 @@ module.exports ={
                 ResolutionCodeId:"$ResolutionCodeId",
                 MapCodeId:"$MapCodeId"
               },
+              
               ActualTotalLoadPerDay: {
-                $sum: "$TotalLoadValue"
+                $sum: "$TotalLoadValue1"
               },
             }}, {$lookup: {
                   'from': 'ResolutionCode', 
@@ -134,10 +141,10 @@ module.exports ={
               AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
               MapCode: '$Map_Code.MapCodeText',
               ResolutionCode: '$resolution_codes.ResolutionCodeText',
-              Year: { $toString:'$_id.Year'},
-              Month: { $toString:'$_id.Month'},
-              Day: { $toString:'$_id.Day'},
-              ActualTotalLoadByDayValue: { $toString:'$ActualTotalLoadPerDay'}
+              Year: { $toInt :'$_id.Year'},
+              Month: { $toInt :'$_id.Month'},
+              Day:  { $toInt :'$_id.Day'},
+              ActualTotalLoadByDayValue: '$ActualTotalLoadPerDay'
             }}, {$sort: {
               Day: 1
             }}];
@@ -148,7 +155,11 @@ module.exports ={
          Q= [{$match: {
             AreaName: _AreaName,
             Year: _Year
-          }}, {$group: {
+          }},{
+            $set : {
+              TotalLoadValue1 : {$toDouble : '$TotalLoadValue'}
+            }
+          }, {$group: {
             _id: {
               Year:"$Year",
               Month:"$Month", 
@@ -159,7 +170,7 @@ module.exports ={
               MapCodeId:"$MapCodeId"
             },
             ActualTotalLoadByMonthValue: {
-              $sum: "$TotalLoadValue"
+              $sum: "$TotalLoadValue1"
             },
           }}, {$lookup: {
                 'from': 'ResolutionCode', 
@@ -188,7 +199,8 @@ module.exports ={
                 path:'$Area_Type_Code'
           
           
-              }}, {$project: {
+              }}, 
+          {$project: {
             _id:0,
             Source: 'entso-e',
             Dataset: 'ActualTotalLoad',
@@ -196,9 +208,9 @@ module.exports ={
             AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
             MapCode: '$Map_Code.MapCodeText',
             ResolutionCode: '$resolution_codes.ResolutionCodeText',
-            Year: { $toString:'$_id.Year'},
-            Month: { $toString:'$_id.Month'},
-            ActualTotalLoadByMonthValue: { $toString:'$ActualTotalLoadByMonthValue'}
+            Year: { $toInt :'$_id.Year'},
+            Month: { $toInt :'$_id.Month'},
+            ActualTotalLoadByMonthValue: '$ActualTotalLoadByMonthValue'
           }}, {$sort: {
             Month: 1
           }}];
