@@ -12,8 +12,8 @@ const client_cert = fs.readFileSync('/home/xsrm/Desktop/softeng-ntua-master/ener
 axios.defaults.httpsAgent = new https.Agent({ca : client_cert})
 const base_url = 'https://localhost:8765/energy/api'
 
-export default class ActualTotalLoad extends Command {
-  static description = 'Search ActualTotalLoad Dataset'
+export default class ActualvsForecast extends Command {
+  static description = 'Search ActualvsForecast Dataset'
 
   static flags = {
     area : flags.string({
@@ -42,7 +42,7 @@ export default class ActualTotalLoad extends Command {
 
   async run() {
 
-    const {args, flags} = this.parse(ActualTotalLoad)
+    const {args, flags} = this.parse(ActualvsForecast)
 
       let token=fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
 
@@ -59,7 +59,7 @@ export default class ActualTotalLoad extends Command {
           apikey = `${flags.apikey}`,
           format = `${flags.format}`,
           count = (_date.match(/-/g)||[]).length,
-          dataset = 'ActualTotalLoad',
+          dataset = 'ActualvsForecast',
           options = {
             params : {
               format: format,

@@ -27,8 +27,10 @@ USAGE
 # Commands
 <!-- commands -->
 * [`energy_group012 ActualTotalLoad`](#energy_group012-actualtotalload)
+* [`energy_group012 ActualvsForecast [FILE]`](#energy_group012-actualvsforecast-file)
 * [`energy_group012 Admin`](#energy_group012-admin)
-* [`energy_group012 AggregatedGenerationPerType [FILE]`](#energy_group012-aggregatedgenerationpertype-file)
+* [`energy_group012 AggregatedGenerationPerType`](#energy_group012-aggregatedgenerationpertype)
+* [`energy_group012 DayAheadTotalLoadForecast [FILE]`](#energy_group012-dayaheadtotalloadforecast-file)
 * [`energy_group012 Login`](#energy_group012-login)
 * [`energy_group012 Logout`](#energy_group012-logout)
 * [`energy_group012 help [COMMAND]`](#energy_group012-help-command)
@@ -44,12 +46,28 @@ USAGE
 OPTIONS
   --apikey=apikey              (required)
   --area=area                  (required) Give Area Name to Search
-  --date=date                  Give date like this : YYYY-MM-DD. Exclude to get Current Date
+  --date=date                  Date format : YYYY-MM-DD. Exclude to get Current Date
   --format=json|csv            [default: json] Output format : json | csv
   --timeres=PT15M|PT30M|PT60M  (required) Give Time Resolution
 ```
 
 _See code: [src/commands/ActualTotalLoad.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/ActualTotalLoad.ts)_
+
+## `energy_group012 ActualvsForecast [FILE]`
+
+describe the command here
+
+```
+USAGE
+  $ energy_group012 ActualvsForecast [FILE]
+
+OPTIONS
+  -f, --force
+  -h, --help       show CLI help
+  -n, --name=name  name to print
+```
+
+_See code: [src/commands/ActualvsForecast.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/ActualvsForecast.ts)_
 
 ## `energy_group012 Admin`
 
@@ -73,13 +91,32 @@ OPTIONS
 
 _See code: [src/commands/Admin.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/Admin.ts)_
 
-## `energy_group012 AggregatedGenerationPerType [FILE]`
+## `energy_group012 AggregatedGenerationPerType`
+
+Search AggregatedGenerationPerType Dataset
+
+```
+USAGE
+  $ energy_group012 AggregatedGenerationPerType
+
+OPTIONS
+  --apikey=apikey                  (required)
+  --area=area                      (required) Give Area Name to Search
+  --date=date                      Date format : YYYY-MM-DD. Exclude to get Current Date
+  --format=json|csv                [default: json] Output format : json | csv
+  --productiontype=productiontype  [default: AllTypes] Give Generation Type
+  --timeres=PT15M|PT30M|PT60M      (required) Give Time Resolution
+```
+
+_See code: [src/commands/AggregatedGenerationPerType.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/AggregatedGenerationPerType.ts)_
+
+## `energy_group012 DayAheadTotalLoadForecast [FILE]`
 
 describe the command here
 
 ```
 USAGE
-  $ energy_group012 AggregatedGenerationPerType [FILE]
+  $ energy_group012 DayAheadTotalLoadForecast [FILE]
 
 OPTIONS
   -f, --force
@@ -87,11 +124,11 @@ OPTIONS
   -n, --name=name  name to print
 ```
 
-_See code: [src/commands/AggregatedGenerationPerType.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/AggregatedGenerationPerType.ts)_
+_See code: [src/commands/DayAheadTotalLoadForecast.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/DayAheadTotalLoadForecast.ts)_
 
 ## `energy_group012 Login`
 
-describe the command here
+Login to use Energy CLI
 
 ```
 USAGE

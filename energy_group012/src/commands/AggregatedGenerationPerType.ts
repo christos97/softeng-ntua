@@ -26,7 +26,7 @@ export default class AggregatedGenerationPerType extends Command {
       options : ['PT15M','PT30M','PT60M']
     }),
     date: flags.string({
-      description : "Give date like this : YYYY-MM-DD. Exclude to get Current Date"
+      description : "Date format : YYYY-MM-DD. Exclude to get Current Date"
     }),
     format : flags.string({
       description: "Output format : json | csv",
@@ -48,43 +48,50 @@ export default class AggregatedGenerationPerType extends Command {
 
     const {args, flags} = this.parse(AggregatedGenerationPerType)
 
-      let token=fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
-      axios.defaults.headers.common['X-Observatory-Auth']= token
+    let token=fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
 
-      let areaName = `${flags.area}`,
-          Resolution = `${flags.timeres}`,
-          _date= `${flags.date}`,
-          apikey = `${flags.apikey}`,
-          format = `${flags.format}`,
-          count = (_date.match(/-/g)||[]).length,
-          dataset = 'AggregatedGenerationPerType',
-          options = {
-            params : {
-              format: format,
-              api_key : apikey
-            }
-          }
-
-      if (count == 2) {
-        let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/date/${_date}`
-        axios
-         .get(url,options)
-         .then(( response : any ) => console.log(response.data) )
-         .catch(( err : any ) => catchError(err) )
-      }
-      else if (count == 1){
-        let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/month/${_date}`
-        axios
-         .get(url,options)
-         .then(( response : any ) => console.log(response.data) )
-         .catch(( err : any ) => catchError(err) )
-      }
-      else {
-        let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/year/${_date}`
-        axios
-         .get(url,options)
-         .then(( response : any ) => console.log(response.data) )
-         .catch(( err : any ) => catchError(err) )
-      }
+    if(token == ''){
+      console.error(chalk.red('No user is currently logged in'))
+      process.exit(0)
     }
+
+    axios.defaults.headers.common['X-Observatory-Auth']= token
+
+    let areaName = `${flags.area}`,
+        Resolution = `${flags.timeres}`,
+        _date= `${flags.date}`,
+        apikey = `${flags.apikey}`,
+        format = `${flags.format}`,
+        producion = `${flags.productiontype}`,
+        count = (_date.match(/-/g)||[]).length,
+        dataset = 'AggregatedGenerationPerType',
+        options = {
+          params : {
+            format: format,
+            api_key : apikey
+          }
+        }
+
+    if (count == 2) {
+      let url : String = `${base_url}/${dataset}/${areaName}/${producion}/${Resolution}/date/${_date}`
+      axios
+        .get(url,options)
+        .then(( response : any ) => console.log(response.data) )
+        .catch(( err : any ) => catchError(err) )
+    }
+    else if (count == 1){
+      let url : String = `${base_url}/${dataset}/${areaName}/${producion}/${Resolution}/month/${_date}`
+      axios
+        .get(url,options)
+        .then(( response : any ) => console.log(response.data) )
+        .catch(( err : any ) => catchError(err) )
+    }
+    else {
+      let url : String = `${base_url}/${dataset}/${areaName}/${producion}/${Resolution}/year/${_date}`
+      axios
+       .get(url,options)
+       .then(( response : any ) => console.log(response.data) )
+       .catch(( err : any ) => catchError(err) )
+    }
+  }
 }
