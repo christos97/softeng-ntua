@@ -146,7 +146,7 @@ exports.find_user = (req ,res) => {
 exports.user_logout = (req, res) => {
   const token =  req.headers['x-observatory-auth'];
   const decoded = jwt.verify(token, credentials.secret);
-  let update_quota = fs.readFileSync('/home/xsrm/Desktop/softeng-ntua-master/back-end/config/limit.txt','utf-8')
+  let update_quota = fs.readFileSync('../back-end/config/limit.txt','utf-8')
   fs.writeFileSync('../back-end/config/limit.txt','','utf-8')
   User.findOneAndUpdate({ 
     username: decoded.username 
@@ -160,11 +160,11 @@ exports.user_logout = (req, res) => {
     new: true
   },(err,doc) => {
       if (err) res.status(403).send()
-      else return res.status(200).json({
-        username : doc.username,
-        quotaLeft : doc.quota , 
-        status : 'Logged out'
-      })
+      else return res.status(200).send()
+        //username : doc.username,
+       // quotaLeft : doc.quota , 
+        //status : 'Logged out'
+      
     }
   )
 }
@@ -189,8 +189,7 @@ exports.user_put = (req, res) => {
       {
         new: true
       },(err,doc) => {
-          if (err.code == 11000) res.status(400).send()
-          else  res.status(403).send()
+          if (err)  res.status(403).send()
           return res.status(200).send(doc)
         })
     }
