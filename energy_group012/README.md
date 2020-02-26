@@ -27,12 +27,14 @@ USAGE
 # Commands
 <!-- commands -->
 * [`energy_group012 ActualTotalLoad`](#energy_group012-actualtotalload)
-* [`energy_group012 ActualvsForecast [FILE]`](#energy_group012-actualvsforecast-file)
+* [`energy_group012 ActualvsForecast`](#energy_group012-actualvsforecast)
 * [`energy_group012 Admin`](#energy_group012-admin)
 * [`energy_group012 AggregatedGenerationPerType`](#energy_group012-aggregatedgenerationpertype)
-* [`energy_group012 DayAheadTotalLoadForecast [FILE]`](#energy_group012-dayaheadtotalloadforecast-file)
+* [`energy_group012 DayAheadTotalLoadForecast`](#energy_group012-dayaheadtotalloadforecast)
+* [`energy_group012 HealthCheck`](#energy_group012-healthcheck)
 * [`energy_group012 Login`](#energy_group012-login)
-* [`energy_group012 Logout`](#energy_group012-logout)
+* [`energy_group012 Logout [FILE]`](#energy_group012-logout-file)
+* [`energy_group012 Reset`](#energy_group012-reset)
 * [`energy_group012 help [COMMAND]`](#energy_group012-help-command)
 
 ## `energy_group012 ActualTotalLoad`
@@ -53,18 +55,20 @@ OPTIONS
 
 _See code: [src/commands/ActualTotalLoad.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/ActualTotalLoad.ts)_
 
-## `energy_group012 ActualvsForecast [FILE]`
+## `energy_group012 ActualvsForecast`
 
-describe the command here
+Search ActualvsForecast Dataset
 
 ```
 USAGE
-  $ energy_group012 ActualvsForecast [FILE]
+  $ energy_group012 ActualvsForecast
 
 OPTIONS
-  -f, --force
-  -h, --help       show CLI help
-  -n, --name=name  name to print
+  --apikey=apikey              (required)
+  --area=area                  (required) Give Area Name to Search
+  --date=date                  Date format : YYYY-MM-DD. Exclude to get Current Date
+  --format=json|csv            [default: json] Output format : json | csv
+  --timeres=PT15M|PT30M|PT60M  (required) Give Time Resolution
 ```
 
 _See code: [src/commands/ActualvsForecast.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/ActualvsForecast.ts)_
@@ -110,21 +114,34 @@ OPTIONS
 
 _See code: [src/commands/AggregatedGenerationPerType.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/AggregatedGenerationPerType.ts)_
 
-## `energy_group012 DayAheadTotalLoadForecast [FILE]`
+## `energy_group012 DayAheadTotalLoadForecast`
 
-describe the command here
+Search DayAheadTotalLoadForecast Dataset
 
 ```
 USAGE
-  $ energy_group012 DayAheadTotalLoadForecast [FILE]
+  $ energy_group012 DayAheadTotalLoadForecast
 
 OPTIONS
-  -f, --force
-  -h, --help       show CLI help
-  -n, --name=name  name to print
+  --apikey=apikey              (required)
+  --area=area                  (required) Give Area Name to Search
+  --date=date                  Date format : YYYY-MM-DD. Exclude to get Current Date
+  --format=json|csv            [default: json] Output format : json | csv
+  --timeres=PT15M|PT30M|PT60M  (required) Give Time Resolution
 ```
 
 _See code: [src/commands/DayAheadTotalLoadForecast.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/DayAheadTotalLoadForecast.ts)_
+
+## `energy_group012 HealthCheck`
+
+Check e2e connectivity
+
+```
+USAGE
+  $ energy_group012 HealthCheck
+```
+
+_See code: [src/commands/HealthCheck.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/HealthCheck.ts)_
 
 ## `energy_group012 Login`
 
@@ -142,16 +159,32 @@ OPTIONS
 
 _See code: [src/commands/Login.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/Login.ts)_
 
-## `energy_group012 Logout`
+## `energy_group012 Logout [FILE]`
 
 describe the command here
 
 ```
 USAGE
-  $ energy_group012 Logout
+  $ energy_group012 Logout [FILE]
+
+OPTIONS
+  -f, --force
+  -h, --help       show CLI help
+  -n, --name=name  name to print
 ```
 
 _See code: [src/commands/Logout.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/Logout.ts)_
+
+## `energy_group012 Reset`
+
+Drop collections
+
+```
+USAGE
+  $ energy_group012 Reset
+```
+
+_See code: [src/commands/Reset.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/Reset.ts)_
 
 ## `energy_group012 help [COMMAND]`
 

@@ -34,11 +34,8 @@ const userSchema = mongoose.Schema({
         },
         
     quota : {
-      type : Number,
+      type : String,
       required: true
-    },    
-    api_key :{
-        type: String,
     }
 });
 

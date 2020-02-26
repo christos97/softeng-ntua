@@ -2,6 +2,7 @@ import {Command, flags} from '@oclif/command'
 import { userInfo, type } from 'os'
 import { format } from 'path'
 import {catchError} from '../catchError'
+import { isLoggedIn , setHeader, checkDate } from '../someChecks'
 
 const https = require('https')
 const axios = require ('axios')
@@ -32,11 +33,7 @@ export default class DayAheadTotalLoadForecast extends Command {
       description: "Output format : json | csv",
       options :['json','csv'],
       default: 'json'
-    }),
-    apikey : flags.string({
-      required: true
-    }),
-
+    })
   }
 
 
@@ -44,29 +41,21 @@ export default class DayAheadTotalLoadForecast extends Command {
 
     const {args, flags} = this.parse(DayAheadTotalLoadForecast)
 
-      let token=fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
-
-      if(token == ''){
-        console.error(chalk.red('No user is currently logged in'))
-        process.exit(0)
-      }
-
-      axios.defaults.headers.common['X-Observatory-Auth']= token
+      let token= isLoggedIn()
+      setHeader(token)
 
       let areaName = `${flags.area}`,
           Resolution = `${flags.timeres}`,
           _date= `${flags.date}`,
-          apikey = `${flags.apikey}`,
           format = `${flags.format}`,
           count = (_date.match(/-/g)||[]).length,
           dataset = 'DayAheadTotalLoadForecast',
           options = {
             params : {
-              format: format,
-              api_key : apikey
+              format: format
             }
           }
-
+      checkDate(_date)
       if (count == 2) {
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/date/${_date}`
         axios

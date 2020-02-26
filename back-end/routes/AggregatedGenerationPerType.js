@@ -3,13 +3,13 @@ const router            = express.Router();
 const controller        = require('../controllers/AggregatedGenerationPerTypeController')
 const isLoggedIn        = require('../auth/user_auth')
 
-//Erotima 2a
+//  2.a
 router.get('/:_AreaName/:_ProductionType/:_Resolution/date/:_date_str',isLoggedIn, controller.GetDay )
 
-//Erotima 2b
+//  2.b
 router.get('/:_AreaName/:_ProductionType/:_Resolution/month/:_date_str',isLoggedIn, controller.GetMonth )
 
-//Erotima 2c
+//  2.c
 router.get('/:_AreaName/:_ProductionType/:_Resolution/year/:_Year',isLoggedIn, controller.GetYear )
 
 module.exports = router;

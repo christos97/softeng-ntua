@@ -1,23 +1,17 @@
 const jwt = require('jsonwebtoken');
 const credentials = require('../config/credentials')
 
-
-module.exports = (req, res, next) => {
-    try {
-        const token =  req.headers['x-observatory-auth'];
-        const decoded = jwt.verify(token, credentials.secret);
-        req.userData = decoded;
-        
-        if(  req.userData.username!= credentials.admin_user.username ){ 
-            return res.status(401).json({
-                401: 'Auth failed',
-                Details: 'Admin Priviliges Required' })
-        }
-        next();
-    } catch (error) {
+module.exports =  (req, res, next) => {
+    const token =  req.headers['x-observatory-auth'];
+    //console.log("server TOKEN \n", token)
+    if(token == 'undefined') return res.status(401).json({
+        message : "No token passed"
+    })
+    const decoded =  jwt.verify(token, credentials.secret);
+    if( decoded.username!= credentials.admin_user.username ){ 
         return res.status(401).json({
-            message: 'Admin Only'
-        });
-    }
+            message: 'Admin Priviliges Required' })
+        }
+    next();
 };    
 

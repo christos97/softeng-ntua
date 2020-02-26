@@ -2,6 +2,11 @@ const chalk = require ('chalk')
 
 export function catchError(err : any){
 
+  if (err.response == 'undefined') {
+    console.error('Check Server')
+    process.exit(-1)
+  }
+
   let status = err.response.status
 
   if( status == 500 ){

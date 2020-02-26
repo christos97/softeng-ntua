@@ -19,6 +19,7 @@
     "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "jszip": "^3.2.2",
+    "node-fetch": "^2.6.0",
     "request": "^2.88.2",
     "tslib": "^1.10.0",
     "util": "^0.12.1"

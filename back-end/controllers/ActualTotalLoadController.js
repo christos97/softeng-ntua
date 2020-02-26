@@ -2,7 +2,7 @@ const ActualLoadQuerries =  require('../Querries/ActualLoadQuerries');
 const {Parser}           =  require('json2csv')
 
 exports.GetDate= (req, res) => {
-
+  console.log("here")
   if( (/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.params._date_str)) == false ){
     return res.status(400).json({"Bad request":"Date should be in YYYY-MM-DD format" })}
 
@@ -39,7 +39,7 @@ exports.GetDate= (req, res) => {
     else{ // format will be equal to json or undefined or random string
       res.setHeader('Content-Type', 'application/json');
       cursor.toArray((error, result) => {
-        console.log(result)
+        //console.log(result)
 
         if(result.length==0) {
           return res.status(403).send('Error 403 : No data')} 
@@ -144,7 +144,7 @@ exports.GetDate= (req, res) => {
  
     const _Year = req.params.Year
     
-
+    if (_Year.length > 4 ) return res.status(400).send()
     const _AreaName=req.params.AreaName
     const _Resolution=req.params.Resolution
     const collection = db.collection('ActualTotalLoad')
@@ -176,7 +176,6 @@ exports.GetDate= (req, res) => {
       cursor.toArray((error, result) => {
         if(result.length==0) {
           return res.status(403).send('Error 403 : No data')} 
-        console.log('here')
         res.send(result);
         });
       }

@@ -1,16 +1,13 @@
 import {Command, flags} from '@oclif/command'
 import { userInfo, type } from 'os'
 import { format } from 'path'
-import { readFileSync } from 'fs'
-import { isNullOrUndefined } from 'util'
-import { Socket } from 'dgram'
 import { catchError } from '/home/xsrm/Desktop/softeng-ntua-master/energy_group012/src/catchError'
+import { isLoggedIn , setHeader,checkRequiredFields } from '../someChecks'
 import cli from 'cli-ux'
 const https = require('https')
 const request = require ( 'request')
 const axios = require ('axios')
 const chalk = require ('chalk')
-const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const csv = require('csvtojson')
 const FormData = require ('form-data')
@@ -18,7 +15,6 @@ const client_cert = fs.readFileSync('/home/xsrm/Desktop/softeng-ntua-master/ener
 axios.defaults.httpsAgent = new https.Agent({ca : client_cert})
 https.globalAgent = new https.Agent({ca:client_cert})
 const base_url = 'https://localhost:8765/energy/api'
-let api_key = ''
 
 
 export default class Admin extends Command {
@@ -77,28 +73,18 @@ export default class Admin extends Command {
   async run () {
 
   const {args, flags} = this.parse(Admin)
-  const token=fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
-  axios.defaults.headers.common['X-Observatory-Auth']= token
 
-  if(token == ''){
-    console.error(chalk.red('No user is currently logged in'))
-    process.exit(0)
-  }
+  let token = isLoggedIn()
+  setHeader(token)
 
   //newdata
 
   if (`${flags.newdata}`!== 'undefined'){
 
     console.log(chalk.white('Locating file...'))
-    let csvPath = `/home/xsrm/Downloads/${flags.source}`
+    let csvPath = `/home/xsrm/Desktop/${flags.source}`
     const jsonArray = await csv({delimiter: ';'}).fromFile(csvPath)
-    //const readStream = fs.createReadStream(csvPath)
 
-    //let form = new FormData({MaxDataSize : Infinity})
-
-    //form.append('file',readStream)
-    //console.log('here')
-    //let formHeaders = form.getHeaders()
     cli.action.start(
       chalk.white('File located and transformed into JSON format!\n') +
       chalk.white('Readable stream created'),
@@ -106,10 +92,8 @@ export default class Admin extends Command {
       )
 
     let json = JSON.stringify(jsonArray)
-    let length = json.length
     fs.writeFileSync('/home/xsrm/Desktop/softeng-ntua-master/energy_group012/csvtojson.json',json)
     let jsonPath = '/home/xsrm/Desktop/softeng-ntua-master/energy_group012/csvtojson.json'
-
     const options = {
       method: 'POST',
       url: `${base_url}/Admin/users/addCSV/${flags.newdata}`,
@@ -121,12 +105,14 @@ export default class Admin extends Command {
     function callback(err : any, response : any){
       if (!err && response.statusCode == 200){
         console.log(chalk.green('Uploading to database!'))
+        console.log(response.body)
       }
       else{
         console.log(chalk.red('Upload Failed'))
+        process.exit(0)
       }
     }
-    const readStream = fs.createReadStream(csvPath)
+    const readStream = fs.createReadStream(jsonPath)
     const writeStream = request(options,callback)
     readStream.pipe(writeStream)
 
@@ -141,14 +127,9 @@ export default class Admin extends Command {
       password : `${flags.passw}`,
       quota : `${flags.quota}`
     })
-    let keys = Object.keys(body)
-    let values = Object.values(body)
-    for (let key in keys){
-      if (values[key] === 'undefined'){
-        console.error(chalk.red.bold("Missing required field: "+keys[key]))
-        process.exit(0)
-      }
-    }
+
+    checkRequiredFields(body)
+
     axios
      .put(`${base_url}/Admin/users/update/${flags.moduser}`,body)
      .then((user : any) =>  {
@@ -160,7 +141,10 @@ export default class Admin extends Command {
         '\nQuotas : ' + user.data.quota
        ))
       })
-     .catch((err : any) => catchError(err))
+     .catch((err : any) => {
+        if (  err.response.status == 400 ) console.log(chalk.red('Mail Exists'))
+        else catchError(err)
+      })
   }
   if (`${flags.newuser}`!== 'undefined'){
     let body = new Object ({
@@ -169,22 +153,13 @@ export default class Admin extends Command {
       password : `${flags.passw}`,
       quota : `${flags.quota}`
     })
-    let keys = Object.keys(body)
-    let values = Object.values(body)
-    for (let key in keys){
-      if (values[key] === 'undefined'){
-        console.error(chalk.red.bold("Missing required field: "+keys[key]))
-        process.exit(0)
-      }
-    }
+
+    checkRequiredFields(body)
 
     axios
      .post(`${base_url}/Admin/users/signup`,body)
      .then((user : any) =>  {
-        console.log(chalk.green.bold("\nNew User Added\n"))
-        let str = JSON.stringify(user.data)
-        api_key = str.slice(12,26)
-        console.log(chalk.blue.bold("API Key: "+api_key))
+        console.log(chalk.green("New User Added\n"))
       })
      .catch((err : any)  => catchError(err))
   }
@@ -195,7 +170,7 @@ export default class Admin extends Command {
       axios
        .get(`${base_url}/Admin/users/userstatus/${flags.userstatus}`)
        .then(( user : any ) => {
-          console.log(chalk.blueBright("\n"+ `${flags.userstatus}` + " User Status\n"))
+          console.log(chalk.cyan("\n"+ `${flags.userstatus}` + " User Status\n"))
           console.log(user.data)
         })
         .catch((err : any) => catchError(err) )

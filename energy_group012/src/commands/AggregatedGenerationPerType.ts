@@ -2,6 +2,8 @@ import {Command, flags} from '@oclif/command'
 import { userInfo, type } from 'os'
 import { format } from 'path'
 import {catchError} from '../catchError'
+import { isLoggedIn , setHeader, checkDate } from '../someChecks'
+import { cli } from 'cli-ux'
 
 const https = require('https')
 const axios = require ('axios')
@@ -33,9 +35,6 @@ export default class AggregatedGenerationPerType extends Command {
       options :['json','csv'],
       default: 'json'
     }),
-    apikey : flags.string({
-      required: true
-    }),
     productiontype : flags.string({
       description: 'Give Generation Type',
       default : 'AllTypes'
@@ -48,29 +47,25 @@ export default class AggregatedGenerationPerType extends Command {
 
     const {args, flags} = this.parse(AggregatedGenerationPerType)
 
-    let token=fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
-
-    if(token == ''){
-      console.error(chalk.red('No user is currently logged in'))
-      process.exit(0)
-    }
-
-    axios.defaults.headers.common['X-Observatory-Auth']= token
+    let token = isLoggedIn()
+    setHeader(token)
 
     let areaName = `${flags.area}`,
         Resolution = `${flags.timeres}`,
         _date= `${flags.date}`,
-        apikey = `${flags.apikey}`,
         format = `${flags.format}`,
         producion = `${flags.productiontype}`,
         count = (_date.match(/-/g)||[]).length,
         dataset = 'AggregatedGenerationPerType',
         options = {
           params : {
-            format: format,
-            api_key : apikey
+            format: format
           }
         }
+
+
+    checkDate(_date)
+    cli.action.start('Request sent','Fetching Data',{stdout : true})
 
     if (count == 2) {
       let url : String = `${base_url}/${dataset}/${areaName}/${producion}/${Resolution}/date/${_date}`
@@ -93,5 +88,6 @@ export default class AggregatedGenerationPerType extends Command {
        .then(( response : any ) => console.log(response.data) )
        .catch(( err : any ) => catchError(err) )
     }
+    cli.action.stop()
   }
 }

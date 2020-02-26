@@ -2,14 +2,15 @@ import {Command, flags} from '@oclif/command'
 import { userInfo, type } from 'os'
 import { format } from 'path'
 import {catchError} from '../catchError'
-
+import { cli } from 'cli-ux'
+import { isLoggedIn , setHeader, checkDate } from '../someChecks'
 const https = require('https')
 const axios = require ('axios')
 const chalk = require ('chalk')
 const fs = require('fs');
 
 const client_cert = fs.readFileSync('/home/xsrm/Desktop/softeng-ntua-master/energy_group012/SSL/ca-crt.pem')
-axios.defaults.httpsAgent = new https.Agent({ca : client_cert})
+axios.defaults.httpsAgent = new https.Agent({ca : client_cert, keepAlive: true})
 const base_url = 'https://localhost:8765/energy/api'
 
 export default class ActualTotalLoad extends Command {
@@ -32,10 +33,7 @@ export default class ActualTotalLoad extends Command {
       description: "Output format : json | csv",
       options :['json','csv'],
       default: 'json'
-    }),
-    apikey : flags.string({
-      required: true
-    }),
+    })
 
   }
 
@@ -44,49 +42,41 @@ export default class ActualTotalLoad extends Command {
 
     const {args, flags} = this.parse(ActualTotalLoad)
 
-      let token=fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
-
-      if(token == ''){
-        console.error(chalk.red('No user is currently logged in'))
-        process.exit(0)
-      }
-
-      axios.defaults.headers.common['X-Observatory-Auth']= token
-
+      let token= isLoggedIn()
+      setHeader(token)
       let areaName = `${flags.area}`,
           Resolution = `${flags.timeres}`,
           _date= `${flags.date}`,
-          apikey = `${flags.apikey}`,
           format = `${flags.format}`,
           count = (_date.match(/-/g)||[]).length,
           dataset = 'ActualTotalLoad',
           options = {
+            method : 'GET',
             params : {
-              format: format,
-              api_key : apikey
+              format: format
             }
           }
 
+      checkDate(_date)
+      cli.action.start('Request sent','Fetching Data',{stdout : true})
       if (count == 2) {
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/date/${_date}`
-        axios
-         .get(url,options)
+        axios(url,options)
          .then(( response : any ) => console.log(response.data) )
-         .catch(( err : any ) => catchError(err) )
+         .catch(( err : any ) => catchError(err))
       }
       else if (count == 1){
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/month/${_date}`
-        axios
-         .get(url,options)
+        axios(url,options)
          .then(( response : any ) => console.log(response.data) )
          .catch(( err : any ) => catchError(err) )
       }
       else {
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/year/${_date}`
-        axios
-         .get(url,options)
+        axios(url,options)
          .then(( response : any ) => console.log(response.data) )
          .catch(( err : any ) => catchError(err) )
       }
+      cli.action.stop('done')
     }
 }

@@ -2,6 +2,7 @@ import {Command, flags} from '@oclif/command'
 import { userInfo, type } from 'os'
 import { format } from 'path'
 import {catchError} from '../catchError'
+import { loginChecks } from '../someChecks'
 const https = require('https')
 const axios = require ('axios')
 const chalk = require ('chalk')
@@ -25,29 +26,25 @@ export default class Login extends Command {
   async run() {
 
     const {args, flags} = this.parse(Login)
-
     function greet( user : any){
-      console.log(chalk.magenta.bold.italic(`\n     ---     Welcome to Energy CLI!      ---     \n` ))
-      console.log(chalk.cyan('Use your Api Key to search for data\n' + "Your Api Key: " + user.data.api_key))
+      console.log(chalk.magenta.bold.italic(`\n     ---   Hey ${flags.username}! Welcome to Energy CLI     ---     \n` ))
+      //console.log(chalk.cyan('Use your Api Key to search for data\n' + "Your Api Key: " + user.data.api_key))
     }
+    let new_password = `${flags.passw}`,
+        new_username = `${flags.username}`,
+        token=fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
 
-    let token_exists = fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8'),
-        new_password = `${flags.passw}`,
-        new_username = `${flags.username}`
-
-    if (token_exists != ""){
-      console.log(chalk.blue.bold("Terminal already in use. To switch account first log out "))
-      process.exit(1)
-    }
-
-    if (new_password.search(' ') >= 0){
-      console.error(chalk.red.bold("Spaces are not allowed in password"))
+    if (token != ""){
+      console.error(chalk.red('Terminal already in use'))
       process.exit(0)
     }
+
+    loginChecks(new_username)
 
     let body = {
       username : new_username,
       password : new_password,
+      status : `${new_username}` + ' logged in'
     }
 
     let options = {
@@ -59,11 +56,12 @@ export default class Login extends Command {
     axios(options)
      .then((user : any) => {
         greet(user)
+        console.log(user.data) // Return JWT
         let token = JSON.stringify(user.data.token)
         fs.writeFileSync('/home/xsrm/softeng19bAPI.token',token.replace(/"/g,''))})
      .catch((err :any)=> {
-        if (err.response.status == 401)
-          console.error(chalk.red('Authentication failed'))
+        if (err.response == 'undefined') catchError(err)
+        if (err.response.status == 401) console.error(chalk.red("Error 401 : Authentication failed"))
         else catchError(err)
       })
     }

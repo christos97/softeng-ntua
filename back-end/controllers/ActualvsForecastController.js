@@ -3,9 +3,7 @@ const {Parser}           =  require('json2csv')
 
 
 exports.GetDate =(req,res,next)=>{
-// simple counter to count all requests for specific user
-if(!req.session.counter){req.session.counter=1}
-else{req.session.counter++;       console.log('request number:',req.session.counter) }
+
 if( (/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.params._date_str)) == false ){
   return res.status(400).json({" Bad request":"Date should be in YYYY-MM-DD format" })}
 
@@ -59,10 +57,7 @@ if( (/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.params._date_s
       
 
     exports.GetMonth = (req, res) => {
-        // simple counter to count all requests for specific user
-        if(!req.session.counter){req.session.counter=1}
-        else{req.session.counter++;       console.log('request number:',req.session.counter) }
-        //Check Date format
+        
         if( (/([12]\d{3}-(0[1-9]|1[0-2]) )/.test(req.params._date_str)) == false ){
           return res.status(400).json({" Bad request":"Date should be in YYYY-MM format" })}
 
@@ -84,7 +79,6 @@ if( (/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.params._date_s
   /* send a csv response here */
         if(req.query.format=='csv'){
           res.setHeader('Content-Type', 'text/csv');
-          //res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'download-' + Date.now() + '.csv\"');
         
           let fields = ['Source', 'Dataset','AreaName',"AreaTypeCode","MapCode","ResolutionCode","Year",
                       "Month","Day","DayAheadTotalLoadForecastByDayValue","ActualTotalLoadByDayValue"];//all field names
@@ -113,19 +107,9 @@ if( (/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.params._date_s
 
 
     exports.GetYear = (req, res) => {
-      // simple counter to count all requests for specific user
-        if(!req.session.counter){req.session.counter=1}
-        else{
-          req.session.counter++
-          console.log('request number:',req.session.counter)
-        }
-        const _Year = parseInt(req.params.Year)
-        if(_Year<1950 || _Year>2050){ 
-          return res.status(400).json({
-            "Error 400":"Bad request",
-            "Details":"Invalid Year"
-          })
-        }
+       
+      const _Year =req.params._Year
+       if (_Year.length > 4 ) return res.status(400).send()
 
         const _AreaName=req.params.AreaName
         const _Resolution=req.params.Resolution      
