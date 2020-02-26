@@ -96,7 +96,7 @@ export default class Admin extends Command {
     let jsonPath = '/home/xsrm/Desktop/softeng-ntua-master/energy_group012/csvtojson.json'
     const options = {
       method: 'POST',
-      url: `${base_url}/Admin/users/${flags.newdata}`,
+      url: `${base_url}/Admin/${flags.newdata}`,
       headers : {
         'X-Observatory-Auth' : token,
       }

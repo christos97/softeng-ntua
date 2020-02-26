@@ -8,12 +8,12 @@ const app            = express()
 // Admin Priviliges
 
 // newuser
-router.post('*/',admin_auth, UserController.user_signup);
+router.post('*/users',admin_auth, UserController.user_signup);
 // userstatus
-router.get("*/:userId",admin_auth, UserController.find_user)
+router.get("*/users/:userId",admin_auth, UserController.find_user)
 // moduser
-router.put("*/:userId",admin_auth, UserController.user_put  );
+router.put("*/users/:userId",admin_auth, UserController.user_put);
 // newdata
-router.post("/:collection",admin_auth,UserController.add_csv)
+router.post('*/:collection',admin_auth,UserController.add_csv)
 
 module.exports = router;

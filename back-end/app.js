@@ -12,6 +12,7 @@ const mongoose          =   require('mongoose')
 const cors              =   require('cors')
 const session           =   require('express-session')
 const rateLimit         =   require("express-rate-limit");
+const admin_auth    = require('./auth/admin_auth')
 const config = require("dotenv").config({path: '../back-end/config/.env'})
 NODE_EXTRA_CA_CERTS='/home/xsrm/Desktop/softeng-ntua-master/back-end/SSL/ca-crt.pem'
 const baseUrl = '/energy/api'
@@ -83,10 +84,10 @@ const UserController = require('./controllers/user');
 // Authorized Resources
 
 app.use(`${baseUrl}/ActualTotalLoad` , ActualTotalLoadRouter);
-app.use(`${baseUrl}/DayAheadTotalLoadForecast`,DayAheadTotalLoadForecastRouter);
-app.use(`${baseUrl}/AggregatedGenerationPerType`,AggregatedGenerationPerTypeRouter);
-app.use(`${baseUrl}/ActualvsForecast`,ActualvsForecastRouter);
-app.use(`${baseUrl}/Admin/users`,UserRouter);
+app.use(`${baseUrl}/DayAheadTotalLoadForecast`, DayAheadTotalLoadForecastRouter);
+app.use(`${baseUrl}/AggregatedGenerationPerType`, AggregatedGenerationPerTypeRouter);
+app.use(`${baseUrl}/ActualvsForecast`, ActualvsForecastRouter);
+app.use(`${baseUrl}/Admin`, UserRouter);
 
 //Free Resources
 
@@ -96,7 +97,7 @@ app.post(`${baseUrl}/logout`, UserController.user_logout);
 
 app.get(`${baseUrl}/HealthCheck`, (req,res) => {
     if (db == 'undefined') res.status(500).send()
-    if (db.namespace == 'energy' || db.namespace == 'energyTest') res.status(200).json({status : 'ok'})
+    if (db.namespace == 'energy' || db.namespace == 'energyTest') res.status(200).json({'status' : 'ok'})
 })  
 
 app.post (`${baseUrl}/Reset`,(req,res) => {
@@ -122,7 +123,6 @@ app.use((req,res,)=>{
     res.status(400).json({
             "error 400": "Bad request xd",
             "message" : "could be SSL"
-
     })
 });
 

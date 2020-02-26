@@ -110,18 +110,18 @@ describe('User Test Cases', () => {
         })
     })
 
-//    it('it should GET /ActualTotalLoad/Austria/PT15M/date/2018-01-01 | 1.a.', (done) => {
-  //      chai.request(server)
-    //    .get('/energy/api/ActualTotalLoad/Austria/PT15M/date/2018-01-01')
-      //  .set('x-observatory-auth', user_token)
+    //it('it should GET /ActualTotalLoad/Austria/PT15M/date/2018-01-01 | 1.a.', (done) => {
+      //  chai.request(server)
+        //.get('/energy/api/ActualTotalLoad/Austria/PT15M/date/2018-01-01')
+        //.set('x-observatory-auth', user_token)
         //.send()
         //.end((err, res) => {
           //  res.should.exist
-           // res.should.have.status(200)
+            //res.should.have.status(200)
             //res.body.should.not.be.null
             
-       // })
+        //})
     //})
       
-      //after(() => User.findOneAndDelete({username: 'user'}).exec().then())
+      after(() => User.findOneAndDelete({username: 'user'}).exec().then())
     })  
