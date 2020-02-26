@@ -96,7 +96,7 @@ export default class Admin extends Command {
     let jsonPath = '/home/xsrm/Desktop/softeng-ntua-master/energy_group012/csvtojson.json'
     const options = {
       method: 'POST',
-      url: `${base_url}/Admin/users/addCSV/${flags.newdata}`,
+      url: `${base_url}/Admin/users/${flags.newdata}`,
       headers : {
         'X-Observatory-Auth' : token,
       }
@@ -131,14 +131,14 @@ export default class Admin extends Command {
     checkRequiredFields(body)
 
     axios
-     .put(`${base_url}/Admin/users/update/${flags.moduser}`,body)
+     .put(`${base_url}/Admin/users/${flags.moduser}`,body)
      .then((user : any) =>  {
       console.log(chalk.green(
         user.data.username + `'s new credentials:\n`))
       console.log(chalk.cyan(
         'Email : ' + user.data.email +
         '\nPassword :' + ` ${flags.passw}` +
-        '\nQuotas : ' + user.data.quota
+        '\nQuota : ' + user.data.quota
        ))
       })
      .catch((err : any) => {
@@ -157,7 +157,7 @@ export default class Admin extends Command {
     checkRequiredFields(body)
 
     axios
-     .post(`${base_url}/Admin/users/signup`,body)
+     .post(`${base_url}/Admin/users`,body)
      .then((user : any) =>  {
         console.log(chalk.green("New User Added\n"))
       })
@@ -168,7 +168,7 @@ export default class Admin extends Command {
 
     if (`${flags.userstatus}`!== 'undefined'){
       axios
-       .get(`${base_url}/Admin/users/userstatus/${flags.userstatus}`)
+       .get(`${base_url}/Admin/users/${flags.userstatus}`)
        .then(( user : any ) => {
           console.log(chalk.cyan("\n"+ `${flags.userstatus}` + " User Status\n"))
           console.log(user.data)

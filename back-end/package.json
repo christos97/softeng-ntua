@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "nodemon index.js --no-deprecation ",
-    "test": "mocha ./test --recursive --no-deprecation --timeout 7000 --exit"
+    "test": "mocha ./test --recursive --no-deprecation --timeout 15000 --exit"
   },
   "author": "",
   "license": "ISC",

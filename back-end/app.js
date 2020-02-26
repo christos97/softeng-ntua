@@ -21,30 +21,31 @@ const baseUrl = '/energy/api'
 /*---------------------------------------------------------------------------------------------------*/
 
 const link = credentials.database
-let URL = ''
+let URI = ''
 
 if (process.env.NODE_ENV === 'development'){
-     URL  =    'mongodb+srv://' + link.username + ':'+link.password+
+     URI  =    'mongodb+srv://' + link.username + ':'+link.password+
                     '@' + link.cluster+ process.env.TEST_DB_NAME + link.options
 }
 if(process.env.NODE_ENV === 'production'){
-     URL  =    'mongodb+srv://' + link.username + ':'+link.password+
+     URI  =    'mongodb+srv://' + link.username + ':'+link.password+
                     '@' + link.cluster+ process.env.DB_NAME + link.options
     //  URL   = 'mongodb://' + process.env.DB_USER+':'+process.env.DB_PASS + '@localhost:27017/energy'
 }
 
-mongoose.connect(URL,credentials.mongoose_options)
+//console.log(URI)
+mongoose.connect(URI,credentials.mongoose_options)
 
 db = null // -> global variable to hold the connection 
 
-MongoClient.connect(URL, {
+MongoClient.connect(URI, {
         useNewUrlParser: true,
         useUnifiedTopology:true 
     }, 
         (err, client) => {
             if (err) throw err; 
             assert.equal(null, err)
-            if(URL.search(`${process.env.TEST_DB_NAME}`)== -1){
+            if(URI.search(`${process.env.TEST_DB_NAME}`)== -1){
                 db = client.db(`${process.env.DB_NAME}`)
                 console.log(`Connected to ${process.env.DB_NAME} database`) 
             }
@@ -95,7 +96,7 @@ app.post(`${baseUrl}/logout`, UserController.user_logout);
 
 app.get(`${baseUrl}/HealthCheck`, (req,res) => {
     if (db == 'undefined') res.status(500).send()
-    if (db.namespace == 'energy') res.status(200).json({status : 'ok'})
+    if (db.namespace == 'energy' || db.namespace == 'energyTest') res.status(200).json({status : 'ok'})
 })  
 
 app.post (`${baseUrl}/Reset`,(req,res) => {

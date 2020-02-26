@@ -7,7 +7,6 @@ const https = require('https')
 const axios = require ('axios')
 const chalk = require ('chalk')
 const fs = require('fs');
-
 const client_cert = fs.readFileSync('/home/xsrm/Desktop/softeng-ntua-master/energy_group012/SSL/ca-crt.pem')
 axios.defaults.httpsAgent = new https.Agent({ca : client_cert})
 

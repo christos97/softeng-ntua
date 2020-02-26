@@ -80,7 +80,7 @@ exports.user_signup = (req, res) => {
 };
 
 exports.user_login = (req, res) => {
-
+  console.log(req.body.username)
   User.findOne({ username: req.body.username })
     .exec()
     .then(user => {

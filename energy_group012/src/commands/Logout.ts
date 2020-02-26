@@ -15,7 +15,7 @@ const base_url = 'https://localhost:8765/energy/api'
 
 
 export default class Logout extends Command {
-  static description = 'Login to use Energy CLI'
+  static description = 'Logout from Energy CLI'
 
   static flags = {
     help: flags.help({char: 'h'})
@@ -40,8 +40,7 @@ export default class Logout extends Command {
 
     axios(options)
      .then((user : any) => {
-       console.log(chalk.magenta.bold('\n             ---     Bye Bye    ---\n'))
-       console.log(user.data, '\n')
+       console.log(chalk.magenta.bold('\n             ---     Bye Bye    ---'))
        fs.writeFileSync('/home/xsrm/softeng19bAPI.token','','utf-8')
       })
      .catch((err :any)=> catchError(err))

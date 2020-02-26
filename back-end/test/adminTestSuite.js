@@ -1,4 +1,3 @@
-//const app =require("../app")
 process.env.NODE_ENV = 'development';
 
 const credentials       =   require('../config/credentials')
@@ -16,9 +15,9 @@ chai.use(chaiHttp);
 
 let admin_token = ''
 
-// Admin Scope Activity
+// Admin Scope Activity --- Functionality and Unit Testing
 
-describe('Admin Use Cases', () => {
+describe('Admin Test Cases', () => {
     
   // Login Admin  
   
@@ -77,9 +76,15 @@ describe('Admin Use Cases', () => {
             res.should.have.status(200);
             res.body.should.not.be.null
             res.body.should.be.an('object');
-            res.body.should.have.property('username').that.is.a('string').equal('user')
-            res.body.should.have.property('email').that.is.a('string').equal('user@user.com')
-            res.body.should.have.property('quota').that.is.a('string').equal('5')
+            res.body.should.have
+              .property('username').that.is.a('string')
+              .equal('user')
+            res.body.should.have
+              .property('email').that.is.a('string')
+              .equal('user@user.com')
+            res.body.should.have
+              .property('quota').that.is.a('string')
+              .equal('5')
             done();
           });
         })
@@ -102,9 +107,14 @@ describe('Admin Use Cases', () => {
             res.should.have.status(200);
             res.body.should.not.be.null
             res.body.should.be.an('object');
-            res.body.should.have.property('email').that.is.a('string').equal('moduser@user.com')
-            res.body.should.have.property('password').that.is.a('string')
-            res.body.should.have.property('quota').that.is.a('string').equal('10')
+            res.body.should.have
+              .property('email').that.is.a('string')
+              .equal('moduser@user.com')
+            res.body.should.have
+              .property('password').that.is.a('string')
+            res.body.should.have
+              .property('quota').that.is.a('string')
+              .equal('10')
             done()
           })
         })
@@ -123,6 +133,4 @@ describe('Admin Use Cases', () => {
             done()
           })
         })
-        
-        after(() => User.findOneAndDelete({username: 'user'}).exec().then())
       });
