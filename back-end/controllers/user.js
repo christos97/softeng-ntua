@@ -43,13 +43,12 @@ exports.user_signup = (req, res) => {
   User.findOne({ username: req.body.username })
     .exec()
     .then(user => {
-      if (user != null){ 
-        if (user.length >= 1) {
+      if(user){
           return res.status(400).json({
-          message: "Mail exists"
+          message: "Username exists"
         });
-      } }else {
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
+      }else {
+          bcrypt.hash(req.body.password, 10, (err, hash) => {
           if (err) {
             return res.status(500).json({
               error: "something went wrong"
@@ -80,15 +79,10 @@ exports.user_signup = (req, res) => {
 };
 
 exports.user_login = (req, res) => {
-  console.log(req.body.username)
   User.findOne({ username: req.body.username })
     .exec()
     .then(user => {
-      if (user.length < 1) {
-        return res.status(401).json({
-          message: "Auth failed at username"
-        });
-      }
+      if(user==null) return res.status(401).send()
       bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (err) {
           return res.status(401).json({
@@ -161,10 +155,6 @@ exports.user_logout = (req, res) => {
   },(err,doc) => {
       if (err) res.status(403).send()
       else return res.status(200).send()
-        //username : doc.username,
-       // quotaLeft : doc.quota , 
-        //status : 'Logged out'
-      
     }
   )
 }

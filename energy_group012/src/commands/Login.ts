@@ -55,7 +55,7 @@ export default class Login extends Command {
     axios(options)
      .then((user : any) => {
         greet(user)
-        console.log(user.data) // Return JWT
+        //console.log(user.data) // Return JWT
         let token = JSON.stringify(user.data.token)
         fs.writeFileSync('/home/xsrm/softeng19bAPI.token',token.replace(/"/g,''))})
      .catch((err :any)=> {

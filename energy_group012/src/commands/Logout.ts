@@ -40,7 +40,7 @@ export default class Logout extends Command {
 
     axios(options)
      .then((user : any) => {
-       console.log(chalk.magenta.bold('\n             ---     Bye Bye    ---'))
+       console.log(chalk.magenta.bold('\n             ---     Bye Bye    ---\n'))
        fs.writeFileSync('/home/xsrm/softeng19bAPI.token','','utf-8')
       })
      .catch((err :any)=> catchError(err))

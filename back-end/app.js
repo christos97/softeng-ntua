@@ -52,7 +52,7 @@ MongoClient.connect(URI, {
             }
             else {
                 db = client.db(`${process.env.TEST_DB_NAME}`)
-                console.log(`Connected to ${process.env.TEST_DB_NAME} database`)
+                //console.log(`Connected to ${process.env.TEST_DB_NAME} database`)
             }
         }
     )

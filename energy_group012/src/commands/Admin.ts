@@ -159,7 +159,7 @@ export default class Admin extends Command {
     axios
      .post(`${base_url}/Admin/users`,body)
      .then((user : any) =>  {
-        console.log(chalk.green("New User Added\n"))
+        console.log(chalk.green("User Created"))
       })
      .catch((err : any)  => catchError(err))
   }
