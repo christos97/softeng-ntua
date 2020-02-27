@@ -3,6 +3,7 @@ import { userInfo, type } from 'os'
 import { format } from 'path'
 import {catchError} from '../catchError'
 import { loginChecks, isLoggedIn, setHeader } from '../someChecks'
+import { cli } from 'cli-ux'
 const https = require('https')
 const axios = require ('axios')
 const chalk = require ('chalk')
@@ -27,19 +28,17 @@ export default class Logout extends Command {
 
     let token = isLoggedIn()
     setHeader(token)
+    cli.action.start('Logging out','...',{stdout: true})
 
-    let body = {
-      status : 'logged out'
-    }
 
     let options = {
       method : 'POST',
       url : `${base_url}/logout`,
-      data : body
     }
 
     axios(options)
      .then((user : any) => {
+       cli.action.stop('done')
        console.log(chalk.magenta.bold('\n             ---     Bye Bye    ---\n'))
        fs.writeFileSync('/home/xsrm/softeng19bAPI.token','','utf-8')
       })

@@ -3,6 +3,7 @@ import { userInfo, type } from 'os'
 import { format } from 'path'
 import {catchError} from '../catchError'
 import { loginChecks } from '../someChecks'
+import { cli } from 'cli-ux'
 const https = require('https')
 const axios = require ('axios')
 const chalk = require ('chalk')
@@ -39,11 +40,11 @@ export default class Login extends Command {
     }
 
     loginChecks(new_username)
-
+    cli.action.start('Logging in','...',{stdout: true})
     let body = {
       username : new_username,
       password : new_password,
-      status : `${new_username}` + ' logged in'
+     // status : `${new_username}` + ' logged in'
     }
 
     let options = {
@@ -54,8 +55,8 @@ export default class Login extends Command {
 
     axios(options)
      .then((user : any) => {
+        cli.action.stop('done')
         greet(user)
-        //console.log(user.data) // Return JWT
         let token = JSON.stringify(user.data.token)
         fs.writeFileSync('/home/xsrm/softeng19bAPI.token',token.replace(/"/g,''))})
      .catch((err :any)=> {
@@ -63,5 +64,5 @@ export default class Login extends Command {
         if (err.response.status == 401) console.error(chalk.red("Error 401 : Authentication failed"))
         else catchError(err)
       })
-    }
+   }
   }

@@ -7,7 +7,7 @@ const app            = express()
 
 // Admin Priviliges
 
-// newuser
+// newuser ? 
 router.post('*/users',admin_auth, UserController.user_signup);
 // userstatus
 router.get('*/users/:userId',admin_auth, UserController.find_user)

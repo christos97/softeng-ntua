@@ -3,7 +3,7 @@ import { userInfo, type } from 'os'
 import { format } from 'path'
 import {catchError} from '../catchError'
 import { isLoggedIn , setHeader, checkDate } from '../someChecks'
-
+import { cli } from 'cli-ux'
 const https = require('https')
 const axios = require ('axios')
 const chalk = require ('chalk')
@@ -56,26 +56,37 @@ export default class DayAheadTotalLoadForecast extends Command {
             }
           }
       checkDate(_date)
+      cli.action.start('Request sent','Fetching Data',{stdout : true})
       if (count == 2) {
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/date/${_date}`
         axios
          .get(url,options)
-         .then(( response : any ) => console.log(response.data) )
+         .then(( response : any ) => {
+            cli.action.stop('done')
+            console.log(response.data)
+          })
          .catch(( err : any ) => catchError(err) )
       }
       else if (count == 1){
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/month/${_date}`
         axios
          .get(url,options)
-         .then(( response : any ) => console.log(response.data) )
+         .then(( response : any ) => {
+            cli.action.stop('done')
+            console.log(response.data)
+          })
          .catch(( err : any ) => catchError(err) )
       }
       else {
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/year/${_date}`
         axios
          .get(url,options)
-         .then(( response : any ) => console.log(response.data) )
+         .then(( response : any ) => {
+            cli.action.stop('done')
+            console.log(response.data)
+          })
          .catch(( err : any ) => catchError(err) )
       }
+
     }
 }

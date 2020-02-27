@@ -5,6 +5,7 @@ const fs = require ("fs")
 module.exports = async (req, res, next) => {
     const token =  req.headers['x-observatory-auth'];
     const decoded = jwt.verify(token, credentials.secret);
+    //if (decoded.username == 'admin') next()
     let limit
     try {
       const user = await User.findOne({username : decoded.username})

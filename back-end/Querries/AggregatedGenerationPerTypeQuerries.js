@@ -63,22 +63,22 @@ module.exports ={
                 MapCode: '$Map_Code.MapCodeText',
                 ResolutionCode: '$resolution_codes.ResolutionCodeText',
                 Year: {
-                  $toString: '$_id.Year'
+                  $toInt: '$_id.Year'
                 },
                 Month: {
-                  $toString: '$_id.Month'
+                  $toInt: '$_id.Month'
                 },
                 Day: {
-                  $toString: '$_id.Day'
+                  $toInt: '$_id.Day'
                 },
-                DateTimeUTC:'$DateTime',
+                DateTimeUTC:{$toDate:'$DateTime'},
                 ProductionType: '$Production_Type.ProductionTypeText',
                 ActualGenerationOutputValue: {
-                  $toString: '$ActualGenerationOutputValue'
+                  $toDouble: '$ActualGenerationOutputValue'
                 },
-                UpdateTimeUTC:'$UpdateTime'
+                UpdateTimeUTC:{$toDate:'$UpdateTime'}
               }}, {$sort: {
-                Month: 1
+                DateTime: 1
               }}]
         return Q
 
@@ -131,13 +131,13 @@ module.exports ={
                 AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
                 MapCode: '$Map_Code.MapCodeText',
                 ResolutionCode: '$resolution_codes.ResolutionCodeText',
-                Year:  { $toString: '$Year'},
-                Month: {$toString: '$Month' },
-                Day:   {$toString: '$Day'},
+                Year:  { $toInt: '$Year'},
+                Month: {$toInt: '$Month' },
+                Day:   {$toInt: '$Day'},
                 ProductionType: _ProductionType,
-                DateTimeUTC: '$DateTime',
-                ActualGenerationOutputValue: {$toString: '$ActualGenerationOutput' },
-                UpdateTimeUTC: '$UpdateTime'
+                DateTimeUTC: {$toDate:'$DateTime'},
+                ActualGenerationOutputValue: {$toDouble: '$ActualGenerationOutput' },
+                UpdateTimeUTC: {$toDate:'$UpdateTime'}
               }}, 
               {
             $sort: { DateTime: 1 }
@@ -170,7 +170,7 @@ module.exports ={
                     ProductionTypeId: '$ProductionTypeId'
                 },
                 ActualGenerationOutputByDayValue: {
-                    $sum: '$ActualGenerationOutput'
+                    $sum: {$toDouble:'$ActualGenerationOutput'}
                 }
             }
         }, {
@@ -235,15 +235,15 @@ module.exports ={
                 AreaTypeCode:   '$Area_Type_Code.AreaTypeCodeText',
                 MapCode:        '$Map_Code.MapCodeText',
                 ResolutionCode: '$resolution_codes.ResolutionCodeText',
-                Year:  { $toString: '$_id.Year'},
-                Month: { $toString: '$_id.Month'},
-                Day:   { $toString: '$_id.Day'},
+                Year:  { $toInt: '$_id.Year'},
+                Month: { $toInt: '$_id.Month'},
+                Day:   { $toInt: '$_id.Day'},
                 ProductionType: '$Production_Type.ProductionTypeText',
-                ActualGenerationOutputByDayValue: {$toString: '$ActualGenerationOutputByDayValue'}
+                ActualGenerationOutputByDayValue: {$toDouble: '$ActualGenerationOutputByDayValue'}
             }
         }, {
             $sort: {
-                Month: 1
+                Day: 1
             }
         }];
           return Q
@@ -267,7 +267,7 @@ module.exports ={
               MapCodeId: '$MapCodeId',
               ProductionTypeId: '$ProductionTypeId'
             },
-            ActualGenerationOutputByDayValue:{$sum:'$ActualGenerationOutput'}
+            ActualGenerationOutputByDayValue:{$sum:{$toDouble:'$ActualGenerationOutput'}}
           }}, {
         $lookup: {
             from: 'ResolutionCode',
@@ -307,13 +307,13 @@ module.exports ={
             AreaTypeCode:   '$Area_Type_Code.AreaTypeCodeText',
             MapCode:        '$Map_Code.MapCodeText',
             ResolutionCode: '$resolution_codes.ResolutionCodeText',
-            Year:  { $toString: '$_id.Year'},
-            Month: { $toString: '$_id.Month'},
-            Day:   { $toString: '$_id.Day'},
+            Year:  { $toInt: '$_id.Year'},
+            Month: { $toInt: '$_id.Month'},
+            Day:   { $toInt: '$_id.Day'},
             ProductionType: '$Production_Type.ProductionTypeText',
-            ActualGenerationOutputByDayValue: { $toString: '$ActualGenerationOutputByDayValue'},
+            ActualGenerationOutputByDayValue: { $toDouble: '$ActualGenerationOutputByDayValue'},
           }}, {
-        $sort: { Month: 1 }
+        $sort: { Day: 1 }
     }]
     //console.log("Q=",Q)
     return Q
@@ -339,7 +339,7 @@ module.exports ={
                   MapCodeId:        '$MapCodeId',
                   ProductionTypeId: '$ProductionTypeId'
                 },
-                ActualGenerationOutputByMonthValue:{$sum:'$ActualGenerationOutput'}
+                ActualGenerationOutputByMonthValue:{$sum:{$toDouble:'$ActualGenerationOutput'}}
               }}, {
             $lookup: {
                 from:       'ResolutionCode',
@@ -375,14 +375,13 @@ module.exports ={
                 AreaTypeCode:   '$Area_Type_Code.AreaTypeCodeText',
                 MapCode:        '$Map_Code.MapCodeText',
                 ResolutionCode: '$resolution_codes.ResolutionCodeText',
-                Year:   { $toString: '$_id.Year'},
-                Month:  { $toString: '$_id.Month'},
+                Year:   { $toInt: '$_id.Year'},
+                Month:  { $toInt: '$_id.Month'},
                 ProductionType: '$Production_Type.ProductionTypeText',
-                ActualGenerationOutputByMonthValue: {$toString: '$ActualGenerationOutputByMonthValue'},
+                ActualGenerationOutputByMonthValue: {$toDouble: '$ActualGenerationOutputByMonthValue'},
               }}, {
                   $sort: { Month: 1 }
             }];
-            console.log('I am here in ALLTYPES YEAR')
             return Q
         }
         else{
@@ -405,7 +404,7 @@ module.exports ={
                     ProductionTypeId: '$ProductionTypeId'
                 },
                 ActualGenerationOutputByMonthValue: {
-                    $sum: '$ActualGenerationOutput'
+                    $sum: {$toDouble:'$ActualGenerationOutput'}
                 }
             }
         }, {
@@ -470,10 +469,10 @@ module.exports ={
                 AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
                 MapCode: '$Map_Code.MapCodeText',
                 ResolutionCode: '$resolution_codes.ResolutionCodeText',
-                Year:  { $toString: '$_id.Year'},
-                Month: {$toString: '$_id.Month'},
+                Year:  { $toInt: '$_id.Year'},
+                Month: {$toInt: '$_id.Month'},
                 ProductionType: '$Production_Type.ProductionTypeText',
-                ActualGenerationOutputByMonthValue: {$toString: '$ActualGenerationOutputByMonthValue'}
+                ActualGenerationOutputByMonthValue: {$toDouble: '$ActualGenerationOutputByMonthValue'}
             }
         }, {
             $sort: {

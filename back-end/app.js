@@ -7,14 +7,9 @@ const bodyParser        =   require('body-parser'); // Body parser supports url,
 const MongoClient       =   require('mongodb').MongoClient
 const assert            =   require('assert')
 const credentials       =   require('./config/credentials')
-const cookieParser      =   require('cookie-parser')
 const mongoose          =   require('mongoose')
-const cors              =   require('cors')
-const session           =   require('express-session')
-const rateLimit         =   require("express-rate-limit");
-const admin_auth    = require('./auth/admin_auth')
-const config = require("dotenv").config({path: '../back-end/config/.env'})
-NODE_EXTRA_CA_CERTS='/home/xsrm/Desktop/softeng-ntua-master/back-end/SSL/ca-crt.pem'
+require("dotenv").config({path: '../back-end/config/.env'})
+NODE_EXTRA_CA_CERTS='/SSL/ca-crt.pem'
 const baseUrl = '/energy/api'
 
 /*---------------------------------------------------------------------------------------------------*/
@@ -66,8 +61,7 @@ MongoClient.connect(URI, {
 
 app.use(bodyParser.urlencoded({limit: Infinity ,extended:true, parameterLimit: Infinity}));
 app.use(bodyParser.json({limit : Infinity}));
-app.use(cors())
-app.use(cookieParser());
+
 
 /*---------------------------------------------------------------------------------------------------*/
 /*                                  API ROUTERS                                                      */

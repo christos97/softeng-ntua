@@ -62,21 +62,29 @@ export default class ActualTotalLoad extends Command {
       if (count == 2) {
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/date/${_date}`
         axios(url,options)
-         .then(( response : any ) => console.log(response.data) )
+         .then(( response : any ) =>{
+          cli.action.stop('done')
+          console.log(response.data)
+        })
          .catch(( err : any ) => catchError(err))
       }
       else if (count == 1){
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/month/${_date}`
         axios(url,options)
-         .then(( response : any ) => console.log(response.data) )
+         .then(( response : any ) =>{
+          cli.action.stop('done')
+          console.log(response.data)
+        })
          .catch(( err : any ) => catchError(err) )
       }
       else {
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/year/${_date}`
         axios(url,options)
-         .then(( response : any ) => console.log(response.data) )
+         .then(( response : any ) =>{
+          cli.action.stop('done')
+          console.log(response.data)
+        })
          .catch(( err : any ) => catchError(err) )
       }
-      cli.action.stop('done')
     }
 }

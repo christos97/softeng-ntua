@@ -10,12 +10,14 @@ exports.GetDay = (req, res) => {
             return res.status(400).json({" Bad request":"Date should be in YYYY-MM-DD format" })}
 
     let _date_str = req.params._date_str.split("-")
-    let _Year =  parseInt(_date_str[0])
-    let _Month = parseInt(_date_str[1])
-    let _Day =   parseInt(_date_str[2])
+    let _Year =  _date_str[0]
+    let _Month = _date_str[1]
+    let _Day =   _date_str[2]
     if( (!_Month) || ( !_Day)){
         return res.status(400).json({"Error 400":"Bad request" })
       }
+    if (_Day[0] == 0 ) _Day = _Day[1]
+    if(_Month[0] == 0) _Month = _Month[1]
     let _AreaName = req.params._AreaName
     let _Resolution=req.params._Resolution
     let _ProductionType=req.params._ProductionType
@@ -54,22 +56,14 @@ exports.GetDay = (req, res) => {
 }
 
 exports.GetMonth = (req, res) => {
-    // simple counter to count all requests for specific user
-    if(!req.session.counter){req.session.counter=1}
-    else{
-        req.session.counter++
-        console.log('request number:',req.session.counter)
-      }
-        //Check Date format
-        console.log(req.params._date_str)
-        //if( (/([12]\d{3}-(0[1-9]|1[0-2]) )/.test(req.params._date_str)) == false ){
-          //  return res.status(400).json({" Bad request":"Invalid Date"  })}
+    
     let _date_str = req.params._date_str.split("-")
-    let _Year =  parseInt(_date_str[0])
-    let _Month = parseInt(_date_str[1])
+    let _Year =  _date_str[0]
+    let _Month = _date_str[1]
     if(  !_Month){
         return res.status(400).json({"Error 400":"Bad request" })
       }
+      if(_Month[0] == 0) _Month = _Month[1]
     let _AreaName = req.params._AreaName
     let _Resolution=req.params._Resolution
     let _ProductionType=req.params._ProductionType
@@ -111,7 +105,7 @@ else{ // format will be json or undefined or random string
 exports.GetYear = (req,res,next)=>{
 // simple counter to count all requests for specific user
        
-    const _Year = parseInt(req.params.Year)
+    const _Year = req.params._Year
     if (_Year.length > 4 ) return res.status(400).send()
     let _AreaName = req.params._AreaName
     let _Resolution=req.params._Resolution

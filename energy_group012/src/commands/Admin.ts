@@ -81,13 +81,12 @@ export default class Admin extends Command {
 
   if (`${flags.newdata}`!== 'undefined'){
 
-    console.log(chalk.white('Locating file...'))
+    console.log('Locating file...')
     let csvPath = `/home/xsrm/Desktop/${flags.source}`
     const jsonArray = await csv({delimiter: ';'}).fromFile(csvPath)
 
     cli.action.start(
-      chalk.white('File located and transformed into JSON format!\n') +
-      chalk.white('Readable stream created'),
+      'File located and transformed into JSON format!\nReadable stream created',
       chalk.green.italic(' Sending Data...'),{stdout : true}
       )
 
@@ -115,6 +114,8 @@ export default class Admin extends Command {
     const readStream = fs.createReadStream(jsonPath)
     const writeStream = request(options,callback)
     readStream.pipe(writeStream)
+
+    fs.writeFileSync('/home/xsrm/Desktop/softeng-ntua-master/energy_group012/csvtojson.json','utf-8')
 
     cli.action.stop(chalk.green('Data sent! ') + '\nWaiting for server response...')
   }
@@ -167,9 +168,11 @@ export default class Admin extends Command {
       // User Status
 
     if (`${flags.userstatus}`!== 'undefined'){
+      cli.action.start('Searching User','Fetching Data',{stdout : true})
       axios
        .get(`${base_url}/Admin/users/${flags.userstatus}`)
        .then(( user : any ) => {
+         cli.action.stop('User Found')
           console.log(chalk.cyan("\n"+ `${flags.userstatus}` + " User Status\n"))
           console.log(user.data)
         })

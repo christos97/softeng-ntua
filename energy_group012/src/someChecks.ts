@@ -33,7 +33,7 @@ export function checkDate(date : String   ) {
     console.error(chalk.red('Wrong Date Format'))
     process.exit(0)
   }
-
+  if (date == 'undefined') return
   if (date.length < 4 && date.length != 0) exit()
   if (date.match(/[a-z]/i)) exit()
   let count = (date.match(/-/g)||[]).length

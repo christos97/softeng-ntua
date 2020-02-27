@@ -1,4 +1,4 @@
-const Querries = require('../Querries/DayAheadTotalLoadForecastControllerQuerries')
+const Querries = require('../Querries/DayAheadTotalLoadForecastQuerries')
 const {Parser}           =  require('json2csv')
 
 
@@ -10,19 +10,17 @@ exports.GetDay = (req, res, next) => {
   return res.status(400).json({" Bad request":"Date should be in YYYY-MM-DD format" })}
 
     let _date_str = req.params._date_str.split("-")
-    let _Year = parseInt(_date_str[0])
-    let _Month = parseInt(_date_str[1])
-    let _Day = parseInt(_date_str[2])
+    let _Year = _date_str[0]
+    let _Month = _date_str[1]
+    let _Day = _date_str[2]
     if( (!_Month) || ( !_Day)){
       return res.status(400).json({"Error 400":"Bad request" })
     }
     let _AreaName = req.params._AreaName
     let _Resolution = req.params._Resolution
-  
-  
-    console.log(_Year, _Month, _Day)
-  
-  
+    if (_Day[0] == 0 ) _Day = _Day[1]
+    if(_Month[0] == 0) _Month = _Month[1]
+   
     let collection = db.collection('DayAheadTotalLoadForecast')
     const agg = Querries.Get_Date_Querry (_AreaName,_Resolution,_Year,_Month,_Day)
     let cursor = collection.aggregate(agg)
@@ -30,7 +28,6 @@ exports.GetDay = (req, res, next) => {
     /* send a csv response here */
           if(req.query.format=='csv'){
             res.setHeader('Content-Type', 'text/csv');
-            //res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'download-' + Date.now() + '.csv\"');
 
             let fields = ['Source', 'Dataset','AreaName',"AreaTypeCode","MapCode","ResolutionCode","Year",
                         "Month","Day","DateTimeUTC","ProductionType","DayAheadTotalLoadForecastValue","UpdateTimeUTC"];//all field names
@@ -63,17 +60,15 @@ exports.GetDay = (req, res, next) => {
 
 exports.GetMonth = (req, res) => {
   
-  if( (/([12]\d{3}-(0[1-9]|1[0-2]) )/.test(req.params._date_str)) == false ){
-  return res.status(400).json({" Bad request":"Date should be in YYYY-MM format" })}
+  //if( (/([12]\d{3}-(0[1-9]|1[0-2]) )/.test(req.params._date_str)) == false ){
+  //return res.status(400).json({" Bad request":"Date should be in YYYY-MM format" })}
     const _AreaName = req.params.AreaName
     const _Resolution = req.params.Resolution
     let _date_str = req.params._date_str.split("-")
-    let _Year = parseInt(_date_str[0])
-    let _Month = parseInt(_date_str[1])
-    if(!Month){
-      return res.status(400).json({"Error 400":"Bad request" })
-    }
-  
+    let _Year = _date_str[0]
+    let _Month = _date_str[1]
+    
+    if(_Month[0] == 0) _Month = _Month[1]
   
     let collection = db.collection('DayAheadTotalLoadForecast')
     const agg = Querries.Get_Month_Querry (_AreaName,_Resolution,_Year,_Month)
@@ -113,9 +108,8 @@ exports.GetMonth = (req, res) => {
 
 
 exports.GetYear = (req, res) => {
-  // simple counter to count all requests for specific user
   
-  const _Year = parseInt(req.params.Year)
+  const _Year = req.params.Year
   if (_Year.length > 4 ) return res.status(400).send()
     const _AreaName = req.params.AreaName
     const _Resolution = req.params.Resolution  
@@ -123,10 +117,8 @@ exports.GetYear = (req, res) => {
     const agg = Querries.Get_Year_Querry(_AreaName,_Resolution,_Year)
     const cursor = collection.aggregate(agg)
   
-        /* send a csv response here */
         if(req.query.format=='csv'){
           res.setHeader('Content-Type', 'text/csv');
-          //res.setHeader('Content-Disposition', 'attachment; filename=\"' + 'download-' + Date.now() + '.csv\"');
         
           let fields = ['Source', 'Dataset','AreaName',"AreaTypeCode","MapCode","ResolutionCode","Year",
                       "Month","Day","DayAheadTotalLoadForecastByMonthValue"];//all field names
@@ -139,8 +131,8 @@ exports.GetYear = (req, res) => {
             res.send(json2csvParser.parse(result));
           });
         }   
-/* JSON response here*/
-        else{ // format will be json or undefined or random string
+
+        else{ 
         res.setHeader('Content-Type', 'application/json');
         cursor.toArray((error, result) => {
           if(result.length==0) {

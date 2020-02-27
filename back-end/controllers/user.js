@@ -15,7 +15,7 @@ exports.add_csv = (req,res ) => {
   let dbInfoPath = '/home/xsrm/Desktop/softeng-ntua-master/back-end/config/totalRecordsImported.txt'
   
   while(jsonArray.length > 0){
-    jsonChunks.push(jsonArray.splice(0,1500))  
+    jsonChunks.push(jsonArray.splice(0,400))  
   }
 
   //Bulk Onordered Insert
