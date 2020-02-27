@@ -1,4 +1,4 @@
-REST API with a simple CLI.
+Rest API and a simple CLI 'energy_group012' to invoke it.
 ===============
 
 
@@ -6,27 +6,26 @@ REST API with a simple CLI.
 
 <!-- toc -->
 * [Server](#server)
-* [Test](#test)
 * [Usage](#usage)
 * [Commands](#commands)
 
 <!-- tocstop -->
 
 # Server
-Clone into repository.
+
 Before using the CLI be sure server is up and running.
 <!-- server -->
 ```sh-session
 $ cd back-end
-$ NODE_ENV='production' npm start
+$ npm start
 ```
 <!-- serverstop -->
 
 # Usage
-Install Oclif globally and link, to invoke CLI from anywhere in the terminal. 
+Install globally and link, to invoke CLI from anywhere in the terminal. 
 <!-- usage -->
 ```sh-session
-$ npm install -g --save oclif
+$ npm install -g energy_group012 // not published to npm so it wont do anything
 $ cd energy_group012
 $ npm link
 
@@ -43,7 +42,5 @@ USAGE
 Login |
 Logout |
 Admin |
-Reset | 
-HealthCheck | 
 {Dataset}
 
