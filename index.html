@@ -9,15 +9,15 @@
   <li><a href="#commands">Commands</a><!-- tocstop -->
   <h1 id="usage">Usage</h1>
   <!-- usage -->
-  <pre><code class="language-sh-session">$ npm install -g energy_group012
-  $ energy_group012 COMMAND
-  running command...
-  $ energy_group012 (-v|--version|version)
-  energy_group012/0.0.0 linux-x64 node-v12.16.0
-  $ energy_group012 --help [COMMAND]
+  <pre><code class="language-sh-session">
+  Before using the CLI clone into repository
+    $ ./automate.sh
+  HELP
+    $ energy_group012 -h 
+    $ energy_group012 --help [COMMAND]
   USAGE
-  $ energy_group012 COMMAND
-  ...</code></pre>
+    $ energy_group012 COMMAND --flag1 value1 --flag2 value2
+  </code></pre>
   <!-- usagestop -->
   <h1 id="commands">Commands</h1>
   <!-- commands --></li>
@@ -40,8 +40,9 @@
   OPTIONS
     -h, --help           show CLI help
     --passw=passw        (required) Required ,no spaces allowed
-    --username=username  (required) Required</code></pre><h2 id="energy_group012-logout"><code>energy_group012 Logout</code></h2>
-  <p>describe the command here</p>
+    --username=username  (required) Required</code></pre>
+  <h2 id="energy_group012-logout"><code>energy_group012 Logout</code></h2>
+  <p>Logout from CLI</p>
   <pre><code>USAGE
     $ energy_group012 Logout
 
@@ -74,7 +75,7 @@
     --date=date                  Date format : YYYY-MM-DD. Exclude to get Current Date
     --format=json|csv            [default: json] Output format : json | csv
     --timeres=PT15M|PT30M|PT60M  (required) Give Time Resolution</code></pre><h2 id="energy_group012-actualvsforecast"><code>energy_group012 ActualvsForecast</code></h2>
-  <p>Search ActualvsForecast Dataset</p>
+  <p>Compare ActualvsForecast Dataset</p>
   <pre><code>USAGE
     $ energy_group012 ActualvsForecast
 
