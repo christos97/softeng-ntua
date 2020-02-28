@@ -1,4 +1,5 @@
 module.exports = {
+    
     host: "localhost",
     secret: "ByteTheBit  2020",
     database: {
