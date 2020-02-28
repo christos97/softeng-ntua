@@ -1,7 +1,7 @@
 import {Command, flags} from '@oclif/command'
 import { userInfo, type } from 'os'
 import { format } from 'path'
-import { catchError } from '/home/xsrm/Desktop/softeng-ntua-master/energy_group012/src/catchError'
+import { catchError } from '../catchError'
 import { isLoggedIn , setHeader,checkRequiredFields } from '../someChecks'
 import cli from 'cli-ux'
 const https = require('https')
