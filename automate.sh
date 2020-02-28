@@ -1,7 +1,7 @@
 #!/bin/sh
 echo 'Installing Dependencies'
 #sudo npm install -g --save oclif
-#cd back-end && sudo npm install --save && sudo npm i && cd ..
+cd back-end && sudo npm install --save && sudo npm i && cd ..
 echo 'Running Tests for development on port 5000'
 echo 'Connecting to energyTest database'
 cd  back-end && npm run test --silent && cd ..
