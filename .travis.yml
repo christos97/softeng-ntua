@@ -16,7 +16,7 @@ install:
   - npm install
 
 script :
-     - cd back-end && npm run test
+     - cd back-end && npm run test 
 
      
 deploy :
