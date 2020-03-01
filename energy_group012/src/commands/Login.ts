@@ -1,12 +1,14 @@
 import {Command, flags} from '@oclif/command'
 import {catchError} from '../catchError'
 import { loginChecks } from '../someChecks'
+import { readToken, sslPath } from '../path'
 import { cli } from 'cli-ux'
+const fs = require('fs');
+const resolve = require('path').resolve
 const https = require('https')
 const axios = require ('axios')
 const chalk = require ('chalk')
-const fs = require('fs');
-const client_cert = fs.readFileSync('/home/xsrm/Desktop/softeng-ntua-master/energy_group012/SSL/ca-crt.pem')
+const client_cert = sslPath()
 axios.defaults.httpsAgent = new https.Agent({ca : client_cert})
 
 const base_url = 'https://localhost:8765/energy/api'
@@ -27,7 +29,7 @@ export default class Login extends Command {
 
     let new_password = `${flags.passw}`,
         new_username = `${flags.username}`,
-        token=fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
+        token=readToken()
 
     if (token != ""){
       console.error(chalk.red('Terminal already in use'))
@@ -49,7 +51,7 @@ export default class Login extends Command {
      const user = await axios(options)
      console.log(chalk.green('Login Succesful'))
      let token = JSON.stringify(user.data.token)
-     fs.writeFileSync('/home/xsrm/softeng19bAPI.token',token.replace(/"/g,''))
+     fs.writeFileSync(resolve(__dirname,'../../softeng19bAPI.token'),token.replace(/"/g,''),'utf-8' )
     }
     catch (err){ catchError(err) }
    }

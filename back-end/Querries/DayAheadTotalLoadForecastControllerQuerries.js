@@ -61,17 +61,17 @@ module.exports ={
             AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
             MapCode: '$Map_Code.MapCodeText',
             ResolutionCode: '$resolution_codes.ResolutionCodeText',
-            Year: { $toString: "$Year" },
-            Month: { $toString: "$Month" },
-            Day: { $toString: "$Day" },
-            DateTimeUTC: '$DateTime',
-            DayAheadTotalLoadForecast: { $toString: "$TotalLoadValue" },
-            UpdateTimeUTC: '$UpdateTime'
+            Year :   { $toInt : "$Year" } ,
+            Month :   { $toInt : "$Month"} ,
+            Day :     { $toInt :"$Day"} ,
+            DateTimeUTC:  { $toDate : '$DateTime'  },
+            DayAheadTotalLoadForecastValue: { $toDouble: "$TotalLoadValue" },
+            UpdateTimeUTC:  { $toDate :'$UpdateTime'}
           }
         },
         {
           $sort: {
-            'DateTime': 1
+            DateTimeUTC: 1
           }
         }
       ];
@@ -80,89 +80,89 @@ module.exports ={
     },
 
   Get_Month_Querry    : function(_AreaName,_Resolution,_Year,_Month,_Day){
-      Q= [
-        {
-          $match: {
-            AreaName: _AreaName,
-            Month: _Month,
-            Year: _Year
-          }
-        }, {
-          $group: {
-            _id: {
-              Day: "$Day",
-              Year: "$Year",
-              Month: "$Month",
-              AreaName: "$AreaName",
-              AreaTypeCodeId: "$AreaTypeCodeId",
-              AreaCodeId: "$AreaCodeId",
-              ResolutionCodeId: "$ResolutionCodeId",
-              MapCodeId: "$MapCodeId"
-            },
-            DayAheadTotalLoadForecast: {
-              $sum: "$TotalLoadValue"
-            },
-          }
-        }, {
-          $lookup: {
-            'from': 'ResolutionCode',
-            'localField': '_id.ResolutionCodeId',
-            'foreignField': 'Id',
-            'as': 'resolution_codes'
-          }
-        }, {
-          $unwind: {
-            path: '$resolution_codes'
-          }
-        }, {
-          $match: {
-            'resolution_codes.ResolutionCodeText': _Resolution
-          }
-        }, {
-          $lookup: {
-            from: 'MapCode',
-            localField: '_id.MapCodeId',
-            foreignField: 'Id',
-            as: 'Map_Code'
-          }
-        }, {
-          $unwind: {
-            path: '$Map_Code'
-          }
-        }, {
-          $lookup: {
-            from: 'AreaTypeCode',
-            localField: '_id.AreaTypeCodeId',
-            foreignField: 'Id',
-            as: 'Area_Type_Code'
-          }
-        }, {
-          $unwind: {
-  
-  
-            path: '$Area_Type_Code'
-  
-  
-          }
-        }, {
-          $project: {
-            _id: 0,
-            Source: 'entso-e',
-            Dataset: 'DayAheadTotalLoadForecast',
-            AreaName: '$_id.AreaName',
-            AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
-            MapCode: '$Map_Code.MapCodeText',
-            ResolutionCode: '$resolution_codes.ResolutionCodeText',
-            Year: { $toString: '$_id.Year' },
-            Month: { $toString: '$_id.Month' },
-            Day: { $toString: '$_id.Day' },
-            DayAheadTotalLoadForecastByDayValue: { $toString: '$DayAheadTotalLoadForecast' }
-          }
-        }, {
-          $sort: {
-            Day: 1
-          }
-        }];
+      Q= [{
+        $match: {
+          AreaName: _AreaName,
+          Year: _Year,
+          Month: _Month
+        }
+      }, {
+        $lookup: {
+          'from': 'ResolutionCode',
+          'localField': 'ResolutionCodeId',
+          'foreignField': 'Id',
+          'as': 'resolution_codes'
+        }
+      }, {
+        $unwind: {
+          path: '$resolution_codes'
+        }
+      }, {
+        $match: {
+          'resolution_codes.ResolutionCodeText': _Resolution
+        }
+      },{
+        $group: {
+          _id: {
+            Year: "$Year",
+            Month: "$Month",
+            Day: "$Day",
+            AreaName: "$AreaName",
+            AreaTypeCodeId: "$AreaTypeCodeId",
+            AreaCodeId: "$AreaCodeId",
+            ResolutionCodeId: "$ResolutionCodeId",
+            MapCodeId: "$MapCodeId"
+          },
+          DayAheadTotalLoadForecastByDayValue: {
+            $sum: {$toDouble:"$TotalLoadValue"}
+          },
+        }
+      },  {
+        $lookup: {
+          from: 'MapCode',
+          localField: '_id.MapCodeId',
+          foreignField: 'Id',
+          as: 'Map_Code'
+        }
+      }, {
+        $unwind: {
+          path: '$Map_Code'
+        }
+      }, {
+        $lookup: {
+          from: 'AreaTypeCode',
+          localField: '_id.AreaTypeCodeId',
+          foreignField: 'Id',
+          as: 'Area_Type_Code'
+        }
+      }, {
+        $unwind: {
+    
+    
+          path: '$Area_Type_Code'
+    
+    
+        }
+      }, {
+        $project: {
+          _id: 0,
+          Source: 'entso-e',
+          Dataset: 'DayAheadTotalLoadForecast',
+          AreaName: '$_id.AreaName',
+          AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
+          MapCode: '$Map_Code.MapCodeText',
+          ResolutionCode: _Resolution,
+          Year: { $toInt: '$_id.Year' },
+          Month: { $toInt: '$_id.Month' },
+          Day: { $toInt: '$_id.Day' },
+          DayAheadTotalLoadForecastByDayValue: { $toDouble: '$DayAheadTotalLoadForecastByDayValue' }
+        }
+      }, {
+        $sort: {
+          Day: 1
+        }
+      }];
+
         return Q
   },
      
@@ -172,7 +172,22 @@ module.exports ={
           AreaName: _AreaName,
           Year: _Year
         }
+      },{
+        $lookup: {
+          'from': 'ResolutionCode',
+          'localField': 'ResolutionCodeId',
+          'foreignField': 'Id',
+          'as': 'resolution_codes'
+        }
       }, {
+        $unwind: {
+          path: '$resolution_codes'
+        }
+      }, {
+        $match: {
+          'resolution_codes.ResolutionCodeText': _Resolution
+        }
+      },{
         $group: {
           _id: {
             Year: "$Year",
@@ -184,23 +199,8 @@ module.exports ={
             MapCodeId: "$MapCodeId"
           },
           DayAheadTotalLoadForecastByMonthValue: {
-            $sum: "$TotalLoadValue"
+            $sum: {$toDouble:"$TotalLoadValue"}
           },
-        }
-      }, {
-        $lookup: {
-          'from': 'ResolutionCode',
-          'localField': '_id.ResolutionCodeId',
-          'foreignField': 'Id',
-          'as': 'resolution_codes'
-        }
-      }, {
-        $unwind: {
-          path: '$resolution_codes'
-        }
-      }, {
-        $match: {
-          'resolution_codes.ResolutionCodeText': _Resolution
         }
       }, {
         $lookup: {
@@ -236,10 +236,10 @@ module.exports ={
           AreaName: '$_id.AreaName',
           AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
           MapCode: '$Map_Code.MapCodeText',
-          ResolutionCode: '$resolution_codes.ResolutionCodeText',
-          Year: { $toString: '$_id.Year' },
-          Month: { $toString: '$_id.Month' },
-          DayAheadTotalLoadForecastByMonthValue: { $toString: '$DayAheadTotalLoadForecastByMonthValue' }
+          ResolutionCode: _Resolution,
+          Year: { $toInt: '$_id.Year' },
+          Month: { $toInt: '$_id.Month' },
+          DayAheadTotalLoadForecastByMonthValue: { $toDouble: '$DayAheadTotalLoadForecastByMonthValue' }
         }
       }, {
         $sort: {

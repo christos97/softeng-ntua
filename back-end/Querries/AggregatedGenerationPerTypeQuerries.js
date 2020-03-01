@@ -4,86 +4,121 @@ module.exports ={
         let Q;
         if(_ProductionType=='AllTypes'){
         Q = [{
-            $match: {
-                AreaName: _AreaName,
-                Year: _Year,
-                Month: _Month,
-                Day: _Day
-              }}, {
-            $group: {
-                _id: {
-                  Year: '$Year',
-                  Month: '$Month',
-                  Day: '$Day',
-                  AreaName: '$AreaName',
-                  AreaTypeCodeId: '$AreaTypeCodeId',
-                  AreaCodeId: '$AreaCodeId',
-                  ResolutionCodeId: '$ResolutionCodeId',
-                  MapCodeId: '$MapCodeId',
-                  ProductionTypeId: '$ProductionTypeId'
-                },
-                DateTime:{$first:'$DateTime'},
-                ActualGenerationOutputValue:{$first:'$ActualGenerationOutput'},
-                UpdateTime:{$first:'$UpdateTime'}
-              }}, {
-            $lookup: {
-                from: 'ResolutionCode',
-                localField: '_id.ResolutionCodeId',
-                foreignField: 'Id',
-                as: 'resolution_codes'
-              }}, {$unwind: {path: '$resolution_codes'}}, 
-              {$match: {
-                'resolution_codes.ResolutionCodeText': _Resolution
-              }}, {
-            $lookup: {
-                from: 'ProductionType',
-                localField: '_id.ProductionTypeId',
-                foreignField: 'Id',
-                as: 'Production_Type'
-              }}, {$unwind: {path: '$Production_Type'}}, {
-            $lookup: {
-                from: 'MapCode',
-                localField: '_id.MapCodeId',
-                foreignField: 'Id',
-                as: 'Map_Code'
-              }}, {$unwind: {path: '$Map_Code'}}, {
-            $lookup: {
-                from: 'AreaTypeCode',
-                localField: '_id.AreaTypeCodeId',
-                foreignField: 'Id',
-                as: 'Area_Type_Code'
-              }}, {$unwind: {
-                path: '$Area_Type_Code'
-              }}, {$project: {
-                _id: 0,
-                Source: 'entso-e',
-                Dataset: 'AggregatedGenerationPerType',
-                AreaName: '$_id.AreaName',
-                AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
-                MapCode: '$Map_Code.MapCodeText',
-                ResolutionCode: '$resolution_codes.ResolutionCodeText',
-                Year: {
-                  $toString: '$_id.Year'
-                },
-                Month: {
-                  $toString: '$_id.Month'
-                },
-                Day: {
-                  $toString: '$_id.Day'
-                },
-                DateTimeUTC:'$DateTime',
-                ProductionType: '$Production_Type.ProductionTypeText',
-                ActualGenerationOutputValue: {
-                  $toString: '$ActualGenerationOutputValue'
-                },
-                UpdateTimeUTC:'$UpdateTime'
-              }}, {$sort: {
-                Month: 1
-              }}]
+    $match: {
+        AreaName: _AreaName,
+        Year: _Year,
+        Month: _Month,
+        Day: _Day
+    }
+}, {
+    $lookup: {
+        from: 'ResolutionCode',
+        localField: 'ResolutionCodeId',
+        foreignField: 'Id',
+        as: 'resolution_codes'
+    }
+}, {
+    $unwind: {
+        path: '$resolution_codes'
+    }
+}, {
+    $match: {
+        'resolution_codes.ResolutionCodeText': _Resolution
+    }
+}, {
+    $group: {
+        _id: {
+            Year: '$Year',
+            Month: '$Month',
+            Day: '$Day',
+            AreaName: '$AreaName',
+            AreaTypeCodeId: '$AreaTypeCodeId',
+            AreaCodeId: '$AreaCodeId',
+            ResolutionCodeId: '$ResolutionCodeId',
+            MapCodeId: '$MapCodeId',
+            ProductionTypeId: '$ProductionTypeId'
+        },
+        DateTime: {
+            $first: '$DateTime'
+        },
+        ActualGenerationOutputValue: {
+            $first: '$ActualGenerationOutput'
+        },
+        UpdateTime: {
+            $first: '$UpdateTime'
+        }
+    }
+}, {
+    $lookup: {
+        from: 'ProductionType',
+        localField: '_id.ProductionTypeId',
+        foreignField: 'Id',
+        as: 'Production_Type'
+    }
+}, {
+    $unwind: {
+        path: '$Production_Type'
+    }
+}, {
+    $lookup: {
+        from: 'MapCode',
+        localField: '_id.MapCodeId',
+        foreignField: 'Id',
+        as: 'Map_Code'
+    }
+}, {
+    $unwind: {
+        path: '$Map_Code'
+    }
+}, {
+    $lookup: {
+        from: 'AreaTypeCode',
+        localField: '_id.AreaTypeCodeId',
+        foreignField: 'Id',
+        as: 'Area_Type_Code'
+    }
+}, {
+    $unwind: {
+        path: '$Area_Type_Code'
+    }
+}, {
+    $project: {
+        _id: 0,
+        Source: 'entso-e',
+        Dataset: 'AggregatedGenerationPerType',
+        AreaName: '$_id.AreaName',
+        AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
+        MapCode: '$Map_Code.MapCodeText',
+        ResolutionCode: _Resolution,
+        Year: {
+            $toInt: '$_id.Year'
+        },
+        Month: {
+            $toInt: '$_id.Month'
+        },
+        Day: {
+            $toInt: '$_id.Day'
+        },
+        DateTimeUTC: {
+            $toDate: '$DateTime'
+        },
+        ProductionType: '$Production_Type.ProductionTypeText',
+        ActualGenerationOutputValue: {
+            $toDouble: '$ActualGenerationOutputValue'
+        },
+        UpdateTimeUTC: {
+            $toDate: '$UpdateTime'
+        }
+    }
+}, {
+    $sort: {
+        Month: 1
+    }
+}]
         return Q
 
     }
-    else{ // Νοt "AllTypes"
+    else{ // ÎÎ¿t "AllTypes"
          Q= [{
             $match: {
                 AreaName: _AreaName,
@@ -131,13 +166,13 @@ module.exports ={
                 AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
                 MapCode: '$Map_Code.MapCodeText',
                 ResolutionCode: '$resolution_codes.ResolutionCodeText',
-                Year:  { $toString: '$Year'},
-                Month: {$toString: '$Month' },
-                Day:   {$toString: '$Day'},
+                Year:  { $toInt: '$Year'},
+                Month: {$toInt: '$Month' },
+                Day:   {$toInt: '$Day'},
                 ProductionType: _ProductionType,
-                DateTimeUTC: '$DateTime',
-                ActualGenerationOutputValue: {$toString: '$ActualGenerationOutput' },
-                UpdateTimeUTC: '$UpdateTime'
+                DateTimeUTC: {$toDate:'$DateTime'},
+                ActualGenerationOutputValue: {$toDouble: '$ActualGenerationOutput' },
+                UpdateTimeUTC: {$toDate:'$UpdateTime'}
               }}, 
               {
             $sort: { DateTime: 1 }
@@ -150,171 +185,217 @@ module.exports ={
         let Q
         if(_ProductionType != 'AllTypes'){ // Not 'AllTypes'
 
-        Q=[{
-            $match: {
-                AreaName: _AreaName,
-                Year: _Year,
-                Month:_Month
+        Q = 
+        [{
+    $match: {
+        AreaName: _AreaName,
+        Year: _Year,
+        Month: _Month
+    }
+}, {
+    $lookup: {
+        from: 'ResolutionCode',
+        localField: 'ResolutionCodeId',
+        foreignField: 'Id',
+        as: 'resolution_codes'
+    }
+}, {
+    $unwind: {
+        path: '$resolution_codes'
+    }
+}, {
+    $match: {
+        'resolution_codes.ResolutionCodeText': _Resolution
+    }
+}, {
+    $lookup: {
+        from: 'ProductionType',
+        localField: 'ProductionTypeId',
+        foreignField: 'Id',
+        as: 'Production_Type'
+    }
+}, {
+    $unwind: {
+        path: '$Production_Type'
+    }
+}, {
+    $match: {
+        'Production_Type.ProductionTypeText': _ProductionType
+    }
+}, {
+    $group: {
+        _id: {
+            Year: '$Year',
+            Month: '$Month',
+            Day: '$Day',
+            AreaName: '$AreaName',
+            AreaTypeCodeId: '$AreaTypeCodeId',
+            AreaCodeId: '$AreaCodeId',
+            ResolutionCodeId: '$ResolutionCodeId',
+            MapCodeId: '$MapCodeId',
+            ProductionTypeId: '$ProductionTypeId'
+        },
+        ActualGenerationOutputByDayValue: {
+            $sum: {
+                $toDouble: '$ActualGenerationOutput'
             }
-        }, {
-            $group: {
-                _id: {
-                    Year: '$Year',
-                    Month: '$Month',
-                    Day:'$Day',
-                    AreaName: '$AreaName',
-                    AreaTypeCodeId: '$AreaTypeCodeId',
-                    AreaCodeId: '$AreaCodeId',
-                    ResolutionCodeId: '$ResolutionCodeId',
-                    MapCodeId: '$MapCodeId',
-                    ProductionTypeId: '$ProductionTypeId'
-                },
-                ActualGenerationOutputByDayValue: {
-                    $sum: '$ActualGenerationOutput'
-                }
-            }
-        }, {
-            $lookup: {
-                from: 'ResolutionCode',
-                localField: '_id.ResolutionCodeId',
-                foreignField: 'Id',
-                as: 'resolution_codes'
-            }
-        }, {
-            $unwind: {
-                path: '$resolution_codes'
-            }
-        }, {
-            $match: {
-                'resolution_codes.ResolutionCodeText': _Resolution
-            }
-        }, {
-            $lookup: {
-                from: 'ProductionType',
-                localField: '_id.ProductionTypeId',
-                foreignField: 'Id',
-                as: 'Production_Type'
-            }
-        }, {
-            $unwind: {
-                path: '$Production_Type'
-            }
-        }, {
-            $match:{
-                'Production_Type.ProductionTypeText':_ProductionType
-            }
-        },{
-            $lookup: {
-                from: 'MapCode',
-                localField: '_id.MapCodeId',
-                foreignField: 'Id',
-                as: 'Map_Code'
-            }
-        }, {
-            $unwind: {
-                path: '$Map_Code'
-            }
-        }, {
-            $lookup: {
-                from: 'AreaTypeCode',
-                localField: '_id.AreaTypeCodeId',
-                foreignField: 'Id',
-                as: 'Area_Type_Code'
-            }
-        }, {
-            $unwind: {
-                path: '$Area_Type_Code'
-            }
-        }, 
-        {
-            $project: {
-                _id: 0,
-                Source:         'entso-e',
-                Dataset:        'AggregatedGenerationPerType',
-                AreaName:       '$_id.AreaName',
-                AreaTypeCode:   '$Area_Type_Code.AreaTypeCodeText',
-                MapCode:        '$Map_Code.MapCodeText',
-                ResolutionCode: '$resolution_codes.ResolutionCodeText',
-                Year:  { $toString: '$_id.Year'},
-                Month: { $toString: '$_id.Month'},
-                Day:   { $toString: '$_id.Day'},
-                ProductionType: '$Production_Type.ProductionTypeText',
-                ActualGenerationOutputByDayValue: {$toString: '$ActualGenerationOutputByDayValue'}
-            }
-        }, {
-            $sort: {
-                Month: 1
-            }
-        }];
+        }
+    }
+}, {
+    $lookup: {
+        from: 'MapCode',
+        localField: '_id.MapCodeId',
+        foreignField: 'Id',
+        as: 'Map_Code'
+    }
+}, {
+    $unwind: {
+        path: '$Map_Code'
+    }
+}, {
+    $lookup: {
+        from: 'AreaTypeCode',
+        localField: '_id.AreaTypeCodeId',
+        foreignField: 'Id',
+        as: 'Area_Type_Code'
+    }
+}, {
+    $unwind: {
+        path: '$Area_Type_Code'
+    }
+}, {
+    $project: {
+        _id: 0,
+        Source: 'entso-e',
+        Dataset: 'AggregatedGenerationPerType',
+        AreaName: '$_id.AreaName',
+        AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
+        MapCode: '$Map_Code.MapCodeText',
+        ResolutionCode: _Resolution,
+        Year: {
+            $toInt: '$_id.Year'
+        },
+        Month: {
+            $toInt: '$_id.Month'
+        },
+        Day: {
+            $toInt: '$_id.Day'
+        },
+        ProductionType: _ProductionType,
+        ActualGenerationOutputByDayValue: {
+            $toDouble: '$ActualGenerationOutputByDayValue'
+        }
+    }
+}, {
+    $sort: {
+        Day: 1
+    }
+}]
           return Q
     }
     else{   // ALL TYPES
-        Q = [{
-        $match: {
-            AreaName: _AreaName,
-            Year: _Year,
-            Month: _Month
-            }}, {
-        $group: {
-            _id: {
-              Year: '$Year',
-              Month: '$Month',
-              Day: '$Day',
-              AreaName: '$AreaName',
-              AreaTypeCodeId: '$AreaTypeCodeId',
-              AreaCodeId: '$AreaCodeId',
-              ResolutionCodeId: '$ResolutionCodeId',
-              MapCodeId: '$MapCodeId',
-              ProductionTypeId: '$ProductionTypeId'
-            },
-            ActualGenerationOutputByDayValue:{$sum:'$ActualGenerationOutput'}
-          }}, {
-        $lookup: {
-            from: 'ResolutionCode',
-            localField: '_id.ResolutionCodeId',
-            foreignField: 'Id',
-            as: 'resolution_codes'
-          }}, {$unwind: {path: '$resolution_codes'}}, {
-        $match: {'resolution_codes.ResolutionCodeText': _Resolution}}, {
-        $lookup: {
-            from: 'ProductionType',
-            localField: '_id.ProductionTypeId',
-            foreignField: 'Id',
-            as: 'Production_Type'
-          }}, {
-        $unwind: {
-            path: '$Production_Type'
-          }}, {
-        $lookup: {
-            from: 'MapCode',
-            localField: '_id.MapCodeId',
-            foreignField: 'Id',
-            as: 'Map_Code'
-          }}, {$unwind: {path: '$Map_Code'}}, {
-        $lookup: {
-            from: 'AreaTypeCode',
-            localField: '_id.AreaTypeCodeId',
-            foreignField: 'Id',
-            as: 'Area_Type_Code'
-          }}, {
-              $unwind: {path: '$Area_Type_Code'}
-        }, {
-        $project: {
-            _id: 0,
-            Source:         'entso-e',
-            Dataset:        'AggregatedGenerationPerType',
-            AreaName:       '$_id.AreaName',
-            AreaTypeCode:   '$Area_Type_Code.AreaTypeCodeText',
-            MapCode:        '$Map_Code.MapCodeText',
-            ResolutionCode: '$resolution_codes.ResolutionCodeText',
-            Year:  { $toString: '$_id.Year'},
-            Month: { $toString: '$_id.Month'},
-            Day:   { $toString: '$_id.Day'},
-            ProductionType: '$Production_Type.ProductionTypeText',
-            ActualGenerationOutputByDayValue: { $toString: '$ActualGenerationOutputByDayValue'},
-          }}, {
-        $sort: { Month: 1 }
-    }]
+        Q = 
+        [{
+    $match: {
+        AreaName: _AreaName,
+        Year: _Year,
+        Month: _Month
+    }
+}, {
+    $lookup: {
+        from: 'ResolutionCode',
+        localField: 'ResolutionCodeId',
+        foreignField: 'Id',
+        as: 'resolution_codes'
+    }
+}, {
+    $unwind: {
+        path: '$resolution_codes'
+    }
+}, {
+    $match: {
+        'resolution_codes.ResolutionCodeText': _Resolution
+    }
+}, {
+    $group: {
+        _id: {
+            Year: '$Year',
+            Month: '$Month',
+            Day: '$Day',
+            AreaName: '$AreaName',
+            AreaTypeCodeId: '$AreaTypeCodeId',
+            AreaCodeId: '$AreaCodeId',
+            ResolutionCodeId: '$ResolutionCodeId',
+            MapCodeId: '$MapCodeId',
+            ProductionTypeId: '$ProductionTypeId'
+        },
+        ActualGenerationOutputByDayValue: {
+            $sum: {
+                $toDouble: '$ActualGenerationOutput'
+            }
+        }
+    }
+}, {
+    $lookup: {
+        from: 'ProductionType',
+        localField: '_id.ProductionTypeId',
+        foreignField: 'Id',
+        as: 'Production_Type'
+    }
+}, {
+    $unwind: {
+        path: '$Production_Type'
+    }
+}, {
+    $lookup: {
+        from: 'MapCode',
+        localField: '_id.MapCodeId',
+        foreignField: 'Id',
+        as: 'Map_Code'
+    }
+}, {
+    $unwind: {
+        path: '$Map_Code'
+    }
+}, {
+    $lookup: {
+        from: 'AreaTypeCode',
+        localField: '_id.AreaTypeCodeId',
+        foreignField: 'Id',
+        as: 'Area_Type_Code'
+    }
+}, {
+    $unwind: {
+        path: '$Area_Type_Code'
+    }
+}, {
+    $project: {
+        _id: 0,
+        Source: 'entso-e',
+        Dataset: 'AggregatedGenerationPerType',
+        AreaName: '$_id.AreaName',
+        AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
+        MapCode: '$Map_Code.MapCodeText',
+        ResolutionCode: _Resolution,
+        Year: {
+            $toInt: '$_id.Year'
+        },
+        Month: {
+            $toInt: '$_id.Month'
+        },
+        Day: {
+            $toInt: '$_id.Day'
+        },
+        ProductionType: '$Production_Type.ProductionTypeText',
+        ActualGenerationOutputByDayValue: {
+            $toDouble: '$ActualGenerationOutputByDayValue'
+        }
+    }
+}, {
+    $sort: {
+        Day: 1
+    }
+}]
     //console.log("Q=",Q)
     return Q
     }
@@ -323,163 +404,208 @@ module.exports ={
     Get_Year_Querry     : function(_AreaName,_ProductionType,_Resolution,_Year){
     let Q
         if(_ProductionType=='AllTypes'){
-            Q = [{
-            $match: {
-                AreaName: _AreaName,
-                Year: _Year
-                    }}, {
-            $group: {
-                _id: {
-                  Year:     '$Year',
-                  Month:    '$Month',
-                  AreaName: '$AreaName',
-                  AreaTypeCodeId:   '$AreaTypeCodeId',
-                  AreaCodeId:       '$AreaCodeId',
-                  ResolutionCodeId: '$ResolutionCodeId',
-                  MapCodeId:        '$MapCodeId',
-                  ProductionTypeId: '$ProductionTypeId'
-                },
-                ActualGenerationOutputByMonthValue:{$sum:'$ActualGenerationOutput'}
-              }}, {
-            $lookup: {
-                from:       'ResolutionCode',
-                localField: '_id.ResolutionCodeId',
-                foreignField: 'Id',
-                as:         'resolution_codes'
-              }}, {$unwind: { path: '$resolution_codes'
-              }}, {$match: {'resolution_codes.ResolutionCodeText': _Resolution}}, {
-            $lookup: {
-                from:       'ProductionType',
-                localField: '_id.ProductionTypeId',
-                foreignField: 'Id',
-                as:         'Production_Type'
-              }}, {$unwind: {path: '$Production_Type'}}, 
-              {
-            $lookup: {
-                from: 'MapCode',
-                localField: '_id.MapCodeId',
-                foreignField: 'Id',
-                as: 'Map_Code'
-              }}, {$unwind: {path: '$Map_Code'}}, {
-            $lookup: {
-                from: 'AreaTypeCode',
-                localField: '_id.AreaTypeCodeId',
-                foreignField: 'Id',
-                as: 'Area_Type_Code'
-              }}, {$unwind: {path: '$Area_Type_Code'}}, {
-            $project: {
-                _id: 0,
-                Source:         'entso-e',
-                Dataset:        'AggregatedGenerationPerType',
-                AreaName:       '$_id.AreaName',
-                AreaTypeCode:   '$Area_Type_Code.AreaTypeCodeText',
-                MapCode:        '$Map_Code.MapCodeText',
-                ResolutionCode: '$resolution_codes.ResolutionCodeText',
-                Year:   { $toString: '$_id.Year'},
-                Month:  { $toString: '$_id.Month'},
-                ProductionType: '$Production_Type.ProductionTypeText',
-                ActualGenerationOutputByMonthValue: {$toString: '$ActualGenerationOutputByMonthValue'},
-              }}, {
-                  $sort: { Month: 1 }
-            }];
+            Q = 
+            [{
+    $match: {
+        AreaName: _AreaName,
+        Year: _Year
+    }
+}, {
+    $lookup: {
+        from: 'ResolutionCode',
+        localField: 'ResolutionCodeId',
+        foreignField: 'Id',
+        as: 'resolution_codes'
+    }
+}, {
+    $unwind: {
+        path: '$resolution_codes'
+    }
+}, {
+    $match: {
+        'resolution_codes.ResolutionCodeText': _Resolution
+    }
+}, {
+    $group: {
+        _id: {
+            Year: '$Year',
+            Month: '$Month',
+            AreaName: '$AreaName',
+            AreaTypeCodeId: '$AreaTypeCodeId',
+            AreaCodeId: '$AreaCodeId',
+            ResolutionCodeId: '$ResolutionCodeId',
+            MapCodeId: '$MapCodeId',
+            ProductionTypeId: '$ProductionTypeId'
+        },
+        ActualGenerationOutputByMonthValue: {
+            $sum: {
+                $toDouble: '$ActualGenerationOutput'
+            }
+        }
+    }
+}, {
+    $lookup: {
+        from: 'ProductionType',
+        localField: '_id.ProductionTypeId',
+        foreignField: 'Id',
+        as: 'Production_Type'
+    }
+}, {
+    $unwind: {
+        path: '$Production_Type'
+    }
+}, {
+    $lookup: {
+        from: 'MapCode',
+        localField: '_id.MapCodeId',
+        foreignField: 'Id',
+        as: 'Map_Code'
+    }
+}, {
+    $unwind: {
+        path: '$Map_Code'
+    }
+}, {
+    $lookup: {
+        from: 'AreaTypeCode',
+        localField: '_id.AreaTypeCodeId',
+        foreignField: 'Id',
+        as: 'Area_Type_Code'
+    }
+}, {
+    $unwind: {
+        path: '$Area_Type_Code'
+    }
+}, {
+    $project: {
+        _id: 0,
+        Source: 'entso-e',
+        Dataset: 'AggregatedGenerationPerType',
+        AreaName: '$_id.AreaName',
+        AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
+        MapCode: '$Map_Code.MapCodeText',
+        ResolutionCode: _Resolution,
+        Year: {
+            $toInt: '$_id.Year'
+        },
+        Month: {
+            $toInt: '$_id.Month'
+        },
+        ProductionType: '$Production_Type.ProductionTypeText',
+        ActualGenerationOutputByMonthValue: {
+            $toDouble: '$ActualGenerationOutputByMonthValue'
+        }
+    }
+}, {
+    $sort: {
+        Month: 1
+    }
+}]
             console.log('I am here in ALLTYPES YEAR')
             return Q
         }
         else{
     
-        Q = [{
-            $match: {
-                AreaName: _AreaName,
-                Year: _Year
+        Q = 
+        [{
+    $match: {
+        AreaName: _AreaName,
+        Year: _Year
+    }
+}, {
+    $lookup: {
+        from: 'ResolutionCode',
+        localField: 'ResolutionCodeId',
+        foreignField: 'Id',
+        as: 'resolution_codes'
+    }
+}, {
+    $unwind: {
+        path: '$resolution_codes'
+    }
+}, {
+    $match: {
+        'resolution_codes.ResolutionCodeText': _Resolution
+    }
+}, {
+    $lookup: {
+        from: 'ProductionType',
+        localField: 'ProductionTypeId',
+        foreignField: 'Id',
+        as: 'Production_Type'
+    }
+}, {
+    $unwind: {
+        path: '$Production_Type'
+    }
+}, {
+    $match: {
+        'Production_Type.ProductionTypeText': _ProductionType
+    }
+}, {
+    $group: {
+        _id: {
+            Year: '$Year',
+            Month: '$Month',
+            AreaName: '$AreaName',
+            AreaTypeCodeId: '$AreaTypeCodeId',
+            AreaCodeId: '$AreaCodeId',
+            ResolutionCodeId: '$ResolutionCodeId',
+            MapCodeId: '$MapCodeId',
+            ProductionTypeId: '$ProductionTypeId'
+        },
+        ActualGenerationOutputByMonthValue: {
+            $sum: {
+                $toDouble: '$ActualGenerationOutput'
             }
-        }, {
-            $group: {
-                _id: {
-                    Year: '$Year',
-                    Month: '$Month',
-                    AreaName: '$AreaName',
-                    AreaTypeCodeId: '$AreaTypeCodeId',
-                    AreaCodeId: '$AreaCodeId',
-                    ResolutionCodeId: '$ResolutionCodeId',
-                    MapCodeId: '$MapCodeId',
-                    ProductionTypeId: '$ProductionTypeId'
-                },
-                ActualGenerationOutputByMonthValue: {
-                    $sum: '$ActualGenerationOutput'
-                }
-            }
-        }, {
-            $lookup: {
-                from: 'ResolutionCode',
-                localField: '_id.ResolutionCodeId',
-                foreignField: 'Id',
-                as: 'resolution_codes'
-            }
-        }, {
-            $unwind: {
-                path: '$resolution_codes'
-            }
-        }, {
-            $match: {
-                'resolution_codes.ResolutionCodeText': _Resolution
-            }
-        }, {
-            $lookup: {
-                from: 'ProductionType',
-                localField: '_id.ProductionTypeId',
-                foreignField: 'Id',
-                as: 'Production_Type'
-            }
-        }, {
-            $unwind: {
-                path: '$Production_Type'
-            }
-        }, {
-            $match:{
-                'Production_Type.ProductionTypeText':_ProductionType
-            }
-        },{
-            $lookup: {
-                from: 'MapCode',
-                localField: '_id.MapCodeId',
-                foreignField: 'Id',
-                as: 'Map_Code'
-            }
-        }, {
-            $unwind: {
-                path: '$Map_Code'
-            }
-        }, {
-            $lookup: {
-                from: 'AreaTypeCode',
-                localField: '_id.AreaTypeCodeId',
-                foreignField: 'Id',
-                as: 'Area_Type_Code'
-            }
-        }, {
-            $unwind: {
-                path: '$Area_Type_Code'
-            }
-        }, 
-        {
-            $project: {
-                _id: 0,
-                Source: 'entso-e',
-                Dataset: 'AggregatedGenerationPerType',
-                AreaName: '$_id.AreaName',
-                AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
-                MapCode: '$Map_Code.MapCodeText',
-                ResolutionCode: '$resolution_codes.ResolutionCodeText',
-                Year:  { $toString: '$_id.Year'},
-                Month: {$toString: '$_id.Month'},
-                ProductionType: '$Production_Type.ProductionTypeText',
-                ActualGenerationOutputByMonthValue: {$toString: '$ActualGenerationOutputByMonthValue'}
-            }
-        }, {
-            $sort: {
-                Month: 1
-            }
-        }];
+        }
+    }
+}, {
+    $lookup: {
+        from: 'MapCode',
+        localField: '_id.MapCodeId',
+        foreignField: 'Id',
+        as: 'Map_Code'
+    }
+}, {
+    $unwind: {
+        path: '$Map_Code'
+    }
+}, {
+    $lookup: {
+        from: 'AreaTypeCode',
+        localField: '_id.AreaTypeCodeId',
+        foreignField: 'Id',
+        as: 'Area_Type_Code'
+    }
+}, {
+    $unwind: {
+        path: '$Area_Type_Code'
+    }
+}, {
+    $project: {
+        _id: 0,
+        Source: 'entso-e',
+        Dataset: 'AggregatedGenerationPerType',
+        AreaName: '$_id.AreaName',
+        AreaTypeCode: '$Area_Type_Code.AreaTypeCodeText',
+        MapCode: '$Map_Code.MapCodeText',
+        ResolutionCode: _Resolution,
+        Year: {
+            $toInt: '$_id.Year'
+        },
+        Month: {
+            $toInt: '$_id.Month'
+        },
+        ProductionType: _ProductionType,
+        ActualGenerationOutputByMonthValue: '$ActualGenerationOutputByMonthValue'
+
+    }
+}, {
+    $sort: {
+        Month: 1
+    }
+}]
        
            return Q
     }

@@ -1,5 +1,5 @@
 process.env.NODE_ENV = 'development';
-
+const chalk = require('chalk')
 const credentials       =   require('../config/credentials')
 let mongoose = require("mongoose");
 let bcrypt = require("bcrypt");
@@ -15,13 +15,15 @@ chai.use(chaiHttp);
 
 let admin_token = ''
 
-// Admin Scope Activity --- Functionality and Unit Testing
+// Admin Activity --- Functionality and Unit Testing
 
-describe('Admin Test Cases', () => {
-    
-  // Login Admin  
-  
-  it('it should log in admin', (done) => {
+describe(chalk.blue.bold('Admin: Use Case Testing\n'), () => {
+      
+  before(() => User.findOneAndDelete({username: 'user'}).exec().then())
+
+  // Login Admin
+
+  it(chalk.cyan('Use Case 1:') + '  Login admin', (done) => {
       let user = {
         username: "admin",
         password: "321nimda"
@@ -38,10 +40,9 @@ describe('Admin Test Cases', () => {
       })
     })
 
-
-    // Create new user
-
-    it('it should add a new user', (done) => {
+// Create new user
+        
+        it(chalk.cyan('Use Case 2:') + '  Create user without admin priviliges', (done) => {
 
           let user = {
             username: "user",
@@ -61,11 +62,30 @@ describe('Admin Test Cases', () => {
             done();
           });
         });
-        
 
+    it(chalk.red('Error: 400') + '   Should not create user with duplicate credentials', (done) => {
+
+      let user = {
+        username: "user",
+        email: "user@user.com",
+        password : "user",
+        quota : '5'
+      };
+      
+      chai.request(server)
+      .post('/energy/api/Admin/users')
+      .set('x-observatory-auth', admin_token)
+      .send(user)
+      .end((err, res) => {
+        res.should.exist
+        res.should.have.status(400);
+        res.body.should.have.property("message").equals('Duplicate Credentials')
+        done();
+      });
+    });
       // Get UserStatus
 
-      it('it should return userstatus', (done) => {
+      it(chalk.cyan('Use Case 3:') + '  GET userstatus', (done) => {
           
           chai.request(server)
           .get(`/energy/api/Admin/users/user`)
@@ -88,14 +108,13 @@ describe('Admin Test Cases', () => {
             done();
           });
         })
-       
         // Modify User
 
-        it('it should modify an existing user', (done) => {
-          let user = {
+        it(chalk.cyan('Use Case 4:') + '  Modify user credentials & Set quota = 1', (done) => {
+          let user = { 
             email: "moduser@user.com",
             password : "moduser",
-            quota : '10'
+            quota : '1'
           };
           
           chai.request(server)
@@ -114,14 +133,14 @@ describe('Admin Test Cases', () => {
               .property('password').that.is.a('string')
             res.body.should.have
               .property('quota').that.is.a('string')
-              .equal('10')
+              .equal('1')
             done()
           })
         })
       
       // Logout Admin
 
-      it('it should logout admin', (done) => {
+      it(chalk.cyan('Use Case 5:') + '  Logout admin', (done) => {
           chai.request(server)
           .post(`/energy/api/logout`)
           .set('x-observatory-auth', admin_token)

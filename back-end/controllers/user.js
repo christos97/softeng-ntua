@@ -4,51 +4,19 @@ const jwt           = require('jsonwebtoken');
 const RandExp       = require('randexp'); 
 const User          = require("../models/user");
 const credentials   = require('../config/credentials')
-const fs = require('fs')
-
-exports.add_csv = (req,res ) => {
-
-  let collection  = db.collection(req.params.collection)
-  let jsonArray = req.body
-  let jsonChunks =[]
-  let totalRecordsInFile = jsonArray.length
-  let dbInfoPath = '/home/xsrm/Desktop/softeng-ntua-master/back-end/config/totalRecordsImported.txt'
-  
-  while(jsonArray.length > 0){
-    jsonChunks.push(jsonArray.splice(0,1500))  
-  }
-
-  //Bulk Onordered Insert
-  for (let chunk in jsonChunks){
-    collection.insertMany(jsonChunks[chunk],{ordered: false})
-  }
-  
-  let totalDocsImported = fs.readFileSync(dbInfoPath,'utf-8')
-  let totalRecordsImported = Number(totalDocsImported)
-  totalRecordsImported += totalRecordsInFile
-  fs.writeFileSync(dbInfoPath,totalRecordsImported ,'utf-8')
-  
-  return res.status(200).json(
-    {
-      'totalRecordsInFile' : totalRecordsInFile,
-      'totalRecordsImported' : totalRecordsImported
-    }
-  )
-}
+const fs            = require ('fs')
 
 exports.user_signup = (req, res) => {
   if(req.body.password>41 || req.body.password<5){
     return res.status(400).send("password should be between 4 and 40 characters")
   }
-  User.findOne({ username: req.body.username })
+  User.findOne({ $or: [{username: req.body.username}, {email :req.body.email}] })
     .exec()
     .then(user => {
-      if (user != null){ 
-        if (user.length >= 1) {
-          return res.status(400).json({
-          message: "Mail exists"
-        });
-      } }else {
+        if(user) return res.status(400).json({
+            message : 'Duplicate Credentials'
+        })
+        else {
         bcrypt.hash(req.body.password, 10, (err, hash) => {
           if (err) {
             return res.status(500).json({
@@ -80,10 +48,10 @@ exports.user_signup = (req, res) => {
 };
 
 exports.user_login = (req, res) => {
-  console.log(req.body.username)
   User.findOne({ username: req.body.username })
     .exec()
     .then(user => {
+      if (user == null) return res.status(401).send()
       if (user.length < 1) {
         return res.status(401).json({
           message: "Auth failed at username"
@@ -161,10 +129,6 @@ exports.user_logout = (req, res) => {
   },(err,doc) => {
       if (err) res.status(403).send()
       else return res.status(200).send()
-        //username : doc.username,
-       // quotaLeft : doc.quota , 
-        //status : 'Logged out'
-      
     }
   )
 }
@@ -189,8 +153,8 @@ exports.user_put = (req, res) => {
       {
         new: true
       },(err,doc) => {
-          if (err)  res.status(403).send()
-          return res.status(200).send(doc)
+          if (doc == null) return res.status(403).send('Update Failed')
+          else return res.status(200).send(doc)
         })
     }
   })

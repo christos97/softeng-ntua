@@ -7,11 +7,7 @@ const bodyParser        =   require('body-parser'); // Body parser supports url,
 const MongoClient       =   require('mongodb').MongoClient
 const assert            =   require('assert')
 const credentials       =   require('./config/credentials')
-const cookieParser      =   require('cookie-parser')
 const mongoose          =   require('mongoose')
-const cors              =   require('cors')
-const session           =   require('express-session')
-const rateLimit         =   require("express-rate-limit");
 const config = require("dotenv").config({path: '../back-end/config/.env'})
 NODE_EXTRA_CA_CERTS='/home/xsrm/Desktop/softeng-ntua-master/back-end/SSL/ca-crt.pem'
 const baseUrl = '/energy/api'
@@ -65,8 +61,7 @@ MongoClient.connect(URI, {
 
 app.use(bodyParser.urlencoded({limit: Infinity ,extended:true, parameterLimit: Infinity}));
 app.use(bodyParser.json({limit : Infinity}));
-app.use(cors())
-app.use(cookieParser());
+
 
 /*---------------------------------------------------------------------------------------------------*/
 /*                                  API ROUTERS                                                      */
@@ -76,9 +71,8 @@ const ActualTotalLoadRouter             = require('./routes/ActualTotalLoad');
 const AggregatedGenerationPerTypeRouter = require('./routes/AggregatedGenerationPerType');
 const DayAheadTotalLoadForecastRouter   = require('./routes/DayAheadTotalLoadForecast');
 const ActualvsForecastRouter            = require('./routes/ActualvsForecast');
-const UserRouter                        = require('./routes/user')
-const UserController = require('./controllers/user');
-
+const AdminRouter                        = require('./routes/user')
+const freeResourceRouter                = require('./routes/freeResource')
 
 // Authorized Resources
 
@@ -86,33 +80,11 @@ app.use(`${baseUrl}/ActualTotalLoad` , ActualTotalLoadRouter);
 app.use(`${baseUrl}/DayAheadTotalLoadForecast`,DayAheadTotalLoadForecastRouter);
 app.use(`${baseUrl}/AggregatedGenerationPerType`,AggregatedGenerationPerTypeRouter);
 app.use(`${baseUrl}/ActualvsForecast`,ActualvsForecastRouter);
-app.use(`${baseUrl}/Admin/users`,UserRouter);
+app.use(`${baseUrl}/Admin`,AdminRouter);
+app.use(`${baseUrl}`,freeResourceRouter);
 
 //Free Resources
 
-app.post(`${baseUrl}/login`, UserController.user_login)
-
-app.post(`${baseUrl}/logout`, UserController.user_logout);
-
-app.get(`${baseUrl}/HealthCheck`, (req,res) => {
-    if (db == 'undefined') res.status(500).send()
-    if (db.namespace == 'energy' || db.namespace == 'energyTest') res.status(200).json({status : 'ok'})
-})  
-
-app.post (`${baseUrl}/Reset`,(req,res) => {
-
-    db.collection('users').remove({username :{$ne : 'admin'}})
-    db.collection('ActualTotalLoad').drop()
-    db.collection('DayAheadTotalLoadForecast').drop()
-   // db.collection('ActualvsForecast').drop()
-    db.collection('MapCode').drop()
-    db.collection('ResolutionCode').drop()
-    db.collection('ProductionType').drop()
-    db.collection('AllocatedEICDetail').drop()
-    //db.collection('AggregatedGenerationPerType').drop()
-   
-    return res.status(200).json({'status': 'ok'}) 
-})
     
 /*---------------------------------------------------------------------------------------------------*/
 /*  if u reach this line,no router was able to handle the request,so we return an error message      */

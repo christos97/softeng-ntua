@@ -1,19 +1,19 @@
 const chalk = require ('chalk')
 const fs = require('fs');
+const resolve = require('path').resolve
 const axios = require ('axios')
 
 export function isLoggedIn(){
 
-  let token=fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
+  const token = fs.readFileSync(resolve(__dirname,'.././softeng19bAPI.token'),'utf-8' )
   if (token == ""){
-    console.error(chalk.red('whoah there... maybe login first ?'))
+    console.error(chalk.red('Please login first'))
     process.exit(0)
   }
   else return token
 }
 
 export function setHeader( token : any ){
-  //token=fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
   axios.defaults.headers.common['X-Observatory-Auth'] = token
 }
 
@@ -47,8 +47,6 @@ export function checkDate(date : String   ) {
 
 export function loginChecks(password : any){
 
-
-  let token_exists = fs.readFileSync('/home/xsrm/softeng19bAPI.token','utf-8')
   if (password.search(' ') >= 0){
     console.error(chalk.red.bold("Spaces are not allowed in password"))
     process.exit(0)

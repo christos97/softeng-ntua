@@ -50,7 +50,7 @@ export default class ActualTotalLoad extends Command {
           _date= `${flags.date}`,
           format = `${flags.format}`,
           count = (_date.match(/-/g)||[]).length,
-          dataset = 'DayAheadTotalLoadForecast',
+          dataset = 'ActualTotalLoad',
           options = {
             params : {
               format: format
