@@ -17,21 +17,25 @@
     "file-saver": "^2.0.2",
     "form-data": "^3.0.0",
     "https": "^1.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "jszip": "^3.2.2",
+    "node-fetch": "^2.6.0",
     "request": "^2.88.2",
-    "tslib": "^1.11.0"
+    "tslib": "^1.10.0",
+    "util": "^0.12.1"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
     "@oclif/test": "^1.2.5",
     "@types/chai": "^4.2.9",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^10.17.16",
+    "@types/node": "^10.17.15",
     "chai": "^4.2.0",
     "globby": "^10.0.2",
     "mocha": "^5.2.0",
     "nyc": "^14.1.1",
     "ts-node": "^8.6.2",
-    "typescript": "^3.8.2"
+    "typescript": "^3.7.5"
   },
   "engines": {
     "node": ">=8.0.0"
@@ -59,7 +63,7 @@
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
-    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "test": "mocha 'test/**/HealthCheck.test.ts' && mocha 'test/**/Login.test.ts' && mocha 'test/**/Admin.test.ts' && mocha 'test/**/Logout.test.ts'",
     "version": "oclif-dev readme && git add README.md"
   },
   "types": "lib/index.d.ts"

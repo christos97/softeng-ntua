@@ -15,8 +15,8 @@ services :
 install:
   - npm install
 
-script :
-     - cd back-end && npm run test 
+scripts :
+     - cd back-end && npm run test
 
      
 deploy :

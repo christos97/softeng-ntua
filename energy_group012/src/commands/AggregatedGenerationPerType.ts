@@ -4,13 +4,13 @@ import { format } from 'path'
 import {catchError} from '../catchError'
 import { isLoggedIn , setHeader, checkDate } from '../someChecks'
 import { cli } from 'cli-ux'
-
+import { sslPath } from '../path'
 const https = require('https')
 const axios = require ('axios')
 const chalk = require ('chalk')
 const fs = require('fs');
 
-const client_cert = fs.readFileSync('/home/xsrm/Desktop/softeng-ntua-master/energy_group012/SSL/ca-crt.pem')
+const client_cert = sslPath()
 axios.defaults.httpsAgent = new https.Agent({ca : client_cert})
 const base_url = 'https://localhost:8765/energy/api'
 
@@ -35,7 +35,7 @@ export default class AggregatedGenerationPerType extends Command {
       options :['json','csv'],
       default: 'json'
     }),
-    prodtype : flags.string({
+    productiontype : flags.string({
       description: 'Give Generation Type',
       default : 'AllTypes'
     })
@@ -54,7 +54,7 @@ export default class AggregatedGenerationPerType extends Command {
         Resolution = `${flags.timeres}`,
         _date= `${flags.date}`,
         format = `${flags.format}`,
-        producion = `${flags.prodtype}`,
+        producion = `${flags.productiontype}`,
         count = (_date.match(/-/g)||[]).length,
         dataset = 'AggregatedGenerationPerType',
         options = {
@@ -65,39 +65,29 @@ export default class AggregatedGenerationPerType extends Command {
 
 
     checkDate(_date)
-
     cli.action.start('Request sent','Fetching Data',{stdout : true})
 
     if (count == 2) {
       let url : String = `${base_url}/${dataset}/${areaName}/${producion}/${Resolution}/date/${_date}`
       axios
         .get(url,options)
-        .then(( response : any ) =>{
-          cli.action.stop('done')
-          console.log(response.data)
-        })
+        .then(( response : any ) => console.log(response.data) )
         .catch(( err : any ) => catchError(err) )
     }
     else if (count == 1){
       let url : String = `${base_url}/${dataset}/${areaName}/${producion}/${Resolution}/month/${_date}`
       axios
         .get(url,options)
-        .then(( response : any ) =>{
-          cli.action.stop('done')
-          console.log(response.data)
-        })
+        .then(( response : any ) => console.log(response.data) )
         .catch(( err : any ) => catchError(err) )
     }
     else {
       let url : String = `${base_url}/${dataset}/${areaName}/${producion}/${Resolution}/year/${_date}`
       axios
        .get(url,options)
-       .then(( response : any ) => {
-          cli.action.stop('done')
-          console.log(response.data)
-        })
+       .then(( response : any ) => console.log(response.data) )
        .catch(( err : any ) => catchError(err) )
     }
-
+    cli.action.stop()
   }
 }

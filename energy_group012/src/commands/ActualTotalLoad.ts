@@ -44,6 +44,7 @@ export default class ActualTotalLoad extends Command {
 
       let token= isLoggedIn()
       setHeader(token)
+
       let areaName = `${flags.area}`,
           Resolution = `${flags.timeres}`,
           _date= `${flags.date}`,
@@ -51,40 +52,34 @@ export default class ActualTotalLoad extends Command {
           count = (_date.match(/-/g)||[]).length,
           dataset = 'ActualTotalLoad',
           options = {
-            method : 'GET',
             params : {
               format: format
             }
           }
-
       checkDate(_date)
-      cli.action.start('Request sent','Fetching Data',{stdout : true})
       if (count == 2) {
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/date/${_date}`
-        axios(url,options)
-         .then(( response : any ) =>{
-          cli.action.stop('done')
+        try{
+          const response = await axios(url,options)
           console.log(response.data)
-        })
-         .catch(( err : any ) => catchError(err))
+        }
+        catch (err) { catchError(err) }
       }
       else if (count == 1){
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/month/${_date}`
-        axios(url,options)
-         .then(( response : any ) =>{
-          cli.action.stop('done')
+        try{
+          const response = await axios(url,options)
           console.log(response.data)
-        })
-         .catch(( err : any ) => catchError(err) )
+        }
+        catch (err) { catchError(err) }
       }
       else {
         let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/year/${_date}`
-        axios(url,options)
-         .then(( response : any ) =>{
-          cli.action.stop('done')
+        try{
+          const response = await axios(url,options)
           console.log(response.data)
-        })
-         .catch(( err : any ) => catchError(err) )
+        }
+        catch (err) { catchError(err) }
       }
     }
-}
+  }

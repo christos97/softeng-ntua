@@ -3,15 +3,17 @@ import { userInfo, type } from 'os'
 import { format } from 'path'
 import { catchError } from '../catchError'
 import { isLoggedIn , setHeader,checkRequiredFields } from '../someChecks'
+import { sslPath } from '../path'
 import cli from 'cli-ux'
 const https = require('https')
 const request = require ( 'request')
 const axios = require ('axios')
 const chalk = require ('chalk')
 const fs = require('fs');
+const resolve = require('path').resolve
 const csv = require('csvtojson')
 const FormData = require ('form-data')
-const client_cert = fs.readFileSync('/home/xsrm/Desktop/softeng-ntua-master/energy_group012/SSL/ca-crt.pem')
+const client_cert = sslPath()
 axios.defaults.httpsAgent = new https.Agent({ca : client_cert})
 https.globalAgent = new https.Agent({ca:client_cert})
 const base_url = 'https://localhost:8765/energy/api'
@@ -45,26 +47,19 @@ export default class Admin extends Command {
 
     source : flags.string({
       dependsOn: ['newdata'],
-      //required: true
     }),
 
     passw : flags.string({
       description : "Required , no spaces allowed",
       exclusive : ['newdata' ,'userstatus']
-      //dependsOn: ['newuser'] || ['moduser'],
-      //required: true
   }),
     email : flags.string({
       description : "Required",
       exclusive : ['newdata' ,'userstatus']
-      //dependsOn: ['newuser'] || ['moduser'],
-      //required: true
   }),
     quota : flags.string({
       description :'Add user quota',
       exclusive : ['newdata' ,'userstatus']
-      //dependsOn: ['newuser'] || ['moduser'],
-      //required: true
   }),
 
   }
@@ -81,18 +76,18 @@ export default class Admin extends Command {
 
   if (`${flags.newdata}`!== 'undefined'){
 
-    console.log('Locating file...')
-    let csvPath = `/home/xsrm/Desktop/${flags.source}`
+    console.log(chalk.white('Locating file...'))
+    let csvPath = resolve(__dirname,'../../../../') + `/${flags.source}`
     const jsonArray = await csv({delimiter: ';'}).fromFile(csvPath)
-
     cli.action.start(
-      'File located and transformed into JSON format!\nReadable stream created',
+      chalk.white('File located and transformed into JSON format!\n') +
+      chalk.white('Readable stream created'),
       chalk.green.italic(' Sending Data...'),{stdout : true}
       )
 
     let json = JSON.stringify(jsonArray)
-    fs.writeFileSync('/home/xsrm/Desktop/softeng-ntua-master/energy_group012/csvtojson.json',json)
-    let jsonPath = '/home/xsrm/Desktop/softeng-ntua-master/energy_group012/csvtojson.json'
+    fs.writeFileSync(resolve(__dirname,'../../csvtojson.json'),json,'utf-8' )
+    let jsonPath = resolve(__dirname,'../../csvtojson.json')
     const options = {
       method: 'POST',
       url: `${base_url}/Admin/${flags.newdata}`,
@@ -107,15 +102,14 @@ export default class Admin extends Command {
         console.log(response.body)
       }
       else{
-        console.log(chalk.red('Upload Failed'))
+        console.log(response.statusCode)
+        //console.log(chalk.red('Upload Failed'))
         process.exit(0)
       }
     }
     const readStream = fs.createReadStream(jsonPath)
     const writeStream = request(options,callback)
     readStream.pipe(writeStream)
-
-    fs.writeFileSync('/home/xsrm/Desktop/softeng-ntua-master/energy_group012/csvtojson.json','utf-8')
 
     cli.action.stop(chalk.green('Data sent! ') + '\nWaiting for server response...')
   }
@@ -131,21 +125,22 @@ export default class Admin extends Command {
 
     checkRequiredFields(body)
 
-    axios
-     .put(`${base_url}/Admin/users/${flags.moduser}`,body)
-     .then((user : any) =>  {
-      console.log(chalk.green(
-        user.data.username + `'s new credentials:\n`))
-      console.log(chalk.cyan(
-        'Email : ' + user.data.email +
-        '\nPassword :' + ` ${flags.passw}` +
-        '\nQuota : ' + user.data.quota
-       ))
-      })
-     .catch((err : any) => {
-        if (  err.response.status == 400 ) console.log(chalk.red('Mail Exists'))
+    try {
+        const user = await axios.put(`${base_url}/Admin/users/${flags.moduser}`,body)
+        console.log(chalk.magenta(
+          "username:  " + user.data.username,
+          "\npassword:  " + `${flags.passw}`,
+          "\nemail: " + user.data.email,
+          "\nquota  " + user.data.quota
+        ))
+    }
+    catch(err)  {
+        if ( err.response.status == 403 ){
+           console.log(chalk.red('Update failed'))
+           process.exit(0)
+        }
         else catchError(err)
-      })
+      }
   }
   if (`${flags.newuser}`!== 'undefined'){
     let body = new Object ({
@@ -156,27 +151,25 @@ export default class Admin extends Command {
     })
 
     checkRequiredFields(body)
-
-    axios
-     .post(`${base_url}/Admin/users`,body)
-     .then((user : any) =>  {
-        console.log(chalk.green("User Created"))
-      })
-     .catch((err : any)  => catchError(err))
+    try {
+      const user = await axios.post(`${base_url}/Admin/users`,body)
+      if (user) console.log(chalk.green("User Created"))
+    }
+    catch (err) {
+      catchError(err)
+    }
   }
 
       // User Status
 
     if (`${flags.userstatus}`!== 'undefined'){
-      cli.action.start('Searching User','Fetching Data',{stdout : true})
-      axios
-       .get(`${base_url}/Admin/users/${flags.userstatus}`)
-       .then(( user : any ) => {
-         cli.action.stop('User Found')
-          console.log(chalk.cyan("\n"+ `${flags.userstatus}` + " User Status\n"))
-          console.log(user.data)
-        })
-        .catch((err : any) => catchError(err) )
+      try {
+        const  user = await axios.get(`${base_url}/Admin/users/${flags.userstatus}`)
+        console.log(user.data)
+      }
+      catch (err) {
+        catchError(err)
        }
+      }
     }
   }

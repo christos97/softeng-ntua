@@ -1,17 +1,11 @@
-import {expect, test} from '@oclif/test'
+import {expect,test} from '@oclif/test'
 
-describe('Logout', () => {
+describe ('Logout', () => {
   test
-  .stdout()
-  .command(['Logout'])
-  .it('runs hello', ctx => {
-    expect(ctx.stdout).to.contain('hello world')
-  })
-
-  test
-  .stdout()
-  .command(['Logout', '--name', 'jeff'])
-  .it('runs hello --name jeff', ctx => {
-    expect(ctx.stdout).to.contain('hello jeff')
-  })
+   .stdout()
+   .command(['Logout'])
+   .do(output => {
+      expect(output.stdout).to.equal('Logout Succesful\n')
+   })
+   .it()
 })

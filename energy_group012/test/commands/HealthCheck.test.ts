@@ -1,17 +1,12 @@
-import {expect, test} from '@oclif/test'
+import {expect,test} from '@oclif/test'
 
-describe('HealthCheck', () => {
+describe ('HealthCheck', () => {
   test
-  .stdout()
-  .command(['HealthCheck'])
-  .it('runs hello', ctx => {
-    expect(ctx.stdout).to.contain('hello world')
+   .stdout()
+   .command(['HealthCheck'])
+   .do(output => {
+     let log = '{ "status": "ok" }'
+     expect(output.stdout).to.contain(JSON.parse(log))
   })
-
-  test
-  .stdout()
-  .command(['HealthCheck', '--name', 'jeff'])
-  .it('runs hello --name jeff', ctx => {
-    expect(ctx.stdout).to.contain('hello jeff')
-  })
+   .it()
 })

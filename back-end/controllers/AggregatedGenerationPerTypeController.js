@@ -16,8 +16,9 @@ exports.GetDay = (req, res) => {
     if( (!_Month) || ( !_Day)){
         return res.status(400).json({"Error 400":"Bad request" })
       }
-    if (_Day[0] == 0 ) _Day = _Day[1]
-    if(_Month[0] == 0) _Month = _Month[1]
+      if (_Day[0] == 0 ) _Day = _Day[1]
+      if(_Month[0] == 0) _Month = _Month[1]
+      
     let _AreaName = req.params._AreaName
     let _Resolution=req.params._Resolution
     let _ProductionType=req.params._ProductionType
