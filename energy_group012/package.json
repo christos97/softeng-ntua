@@ -18,11 +18,8 @@
     "form-data": "^3.0.0",
     "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
-    "jszip": "^3.2.2",
-    "node-fetch": "^2.6.0",
     "request": "^2.88.2",
-    "tslib": "^1.10.0",
-    "util": "^0.12.1"
+    "tslib": "^1.10.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
@@ -63,7 +60,8 @@
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
-    "test": "mocha 'test/**/HealthCheck.test.ts' && mocha 'test/**/Login.test.ts' && mocha 'test/**/Admin.test.ts' && mocha 'test/**/Logout.test.ts'",
+    "test":
+    "mocha 'test/**/HealthCheck.test.ts' && mocha 'test/**/Login.test.ts' && mocha 'test/**/Admin.test.ts' && mocha 'test/**/Logout.test.ts' && mocha 'test/**/Dataset.test.ts' && mocha 'test/**/Errors.test.ts' && mocha 'test/**/Logout.test.ts'",
     "version": "oclif-dev readme && git add README.md"
   },
   "types": "lib/index.d.ts"

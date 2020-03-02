@@ -2,8 +2,8 @@ import {Command, flags} from '@oclif/command'
 const https = require('https')
 const axios = require ('axios')
 const chalk = require ('chalk')
-const fs = require('fs');
 import { sslPath } from '../path'
+import { catchError } from '../catchError';
 const client_cert = sslPath()
 axios.defaults.httpsAgent = new https.Agent({ca : client_cert})
 
@@ -14,20 +14,13 @@ export default class Reset extends Command {
 
   async run() {
 
-    const {args, flags} = this.parse(Reset)
-
-
-    let options = {
-      method : 'POST',
-      url : `${base_url}/Reset`,
-    }
-
-    axios(options)
-     .then((user : any) => {
-        console.log( user.data)
-     })
-     .catch((err :any)=> {
+    try {
+      const user =await axios.post(`${base_url}/Reset`)
+      console.log(user.data)
+     }
+     catch (err) {
         if(err.response.status == 500) console.error(chalk.red('Reset failed'))
-      })
+        catchError(err)
+      }
     }
   }

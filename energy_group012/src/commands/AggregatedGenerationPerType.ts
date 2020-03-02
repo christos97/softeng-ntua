@@ -1,6 +1,4 @@
 import {Command, flags} from '@oclif/command'
-import { userInfo, type } from 'os'
-import { format } from 'path'
 import {catchError} from '../catchError'
 import { isLoggedIn , setHeader, checkDate } from '../someChecks'
 import { cli } from 'cli-ux'
@@ -35,7 +33,7 @@ export default class AggregatedGenerationPerType extends Command {
       options :['json','csv'],
       default: 'json'
     }),
-    productiontype : flags.string({
+    prodtype : flags.string({
       description: 'Give Generation Type',
       default : 'AllTypes'
     })
@@ -45,7 +43,7 @@ export default class AggregatedGenerationPerType extends Command {
 
   async run() {
 
-    const {args, flags} = this.parse(AggregatedGenerationPerType)
+    const {flags} = this.parse(AggregatedGenerationPerType)
 
     let token = isLoggedIn()
     setHeader(token)
@@ -54,7 +52,7 @@ export default class AggregatedGenerationPerType extends Command {
         Resolution = `${flags.timeres}`,
         _date= `${flags.date}`,
         format = `${flags.format}`,
-        producion = `${flags.productiontype}`,
+        producion = `${flags.prodtype}`,
         count = (_date.match(/-/g)||[]).length,
         dataset = 'AggregatedGenerationPerType',
         options = {
@@ -63,31 +61,28 @@ export default class AggregatedGenerationPerType extends Command {
           }
         }
 
-
     checkDate(_date)
-    cli.action.start('Request sent','Fetching Data',{stdout : true})
 
     if (count == 2) {
       let url : String = `${base_url}/${dataset}/${areaName}/${producion}/${Resolution}/date/${_date}`
-      axios
-        .get(url,options)
-        .then(( response : any ) => console.log(response.data) )
-        .catch(( err : any ) => catchError(err) )
-    }
-    else if (count == 1){
+      try{
+        const response = await axios(url,options)
+        console.log(response.data)
+      }
+      catch (err) { catchError(err) } }
+    else if (count == 1) {
       let url : String = `${base_url}/${dataset}/${areaName}/${producion}/${Resolution}/month/${_date}`
-      axios
-        .get(url,options)
-        .then(( response : any ) => console.log(response.data) )
-        .catch(( err : any ) => catchError(err) )
-    }
+      try{
+        const response = await axios(url,options)
+        console.log(response.data)
+      }
+      catch (err) { catchError(err) } }
     else {
       let url : String = `${base_url}/${dataset}/${areaName}/${producion}/${Resolution}/year/${_date}`
-      axios
-       .get(url,options)
-       .then(( response : any ) => console.log(response.data) )
-       .catch(( err : any ) => catchError(err) )
-    }
-    cli.action.stop()
+      try{
+        const response = await axios(url,options)
+        console.log(response.data)
+      }
+      catch (err) { catchError(err) } }
   }
 }
