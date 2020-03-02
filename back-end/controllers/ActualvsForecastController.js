@@ -8,12 +8,14 @@ if( (/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.params._date_s
   return res.status(400).json({" Bad request":"Date should be in YYYY-MM-DD format" })}
 
     let _date_str = req.params._date_str.split("-")
-    let _Year =  parseInt(_date_str[0])
-    let _Month = parseInt(_date_str[1])
-    let _Day =   parseInt(_date_str[2])
+    let _Year =  _date_str[0]
+    let _Month = _date_str[1]
+    let _Day =   _date_str[2]
     if( (!_Month) || ( !_Day)){
       return res.status(400).json({"Error 400":"Bad request" })
     }
+    if (_Day[0] == 0 ) _Day = _Day[1]
+    if(_Month[0] == 0) _Month = _Month[1]
     let _AreaName = req.params._AreaName
     let _Resolution=req.params._Resolution
 
@@ -58,17 +60,17 @@ if( (/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.params._date_s
 
     exports.GetMonth = (req, res) => {
         
-        if( (/([12]\d{3}-(0[1-9]|1[0-2]) )/.test(req.params._date_str)) == false ){
-          return res.status(400).json({" Bad request":"Date should be in YYYY-MM format" })}
 
         const _AreaName=req.params.AreaName
         const _Resolution=req.params.Resolution
         let _date_str = req.params._date_str.split("-")
-        let _Year =  parseInt(_date_str[0])
-        let _Month = parseInt(_date_str[1])
+        let _Year =  _date_str[0]
+        let _Month = _date_str[1]
         if( !_Month){
           return res.status(400).json({"Error 400":"Bad request" })
         }
+        if(_Month[0] == 0) _Month = _Month[1]
+
       
             let collection = db.collection('DayAheadTotalLoadForecast')
             const agg = Querries.Get_Month_Querry(_AreaName,_Resolution,_Year,_Month)
