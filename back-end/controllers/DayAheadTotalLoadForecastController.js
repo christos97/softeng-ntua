@@ -22,7 +22,6 @@ exports.GetDay = (req, res, next) => {
     let _Resolution = req.params._Resolution
   
   
-    console.log(_Year, _Month, _Day)
   
   
     let collection = db.collection('DayAheadTotalLoadForecast')

@@ -40,3 +40,4 @@ describe ('DayAheadTotalLoadForecast', () => {
    })
    .it()
 })
+

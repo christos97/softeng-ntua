@@ -35,7 +35,8 @@ export default class AggregatedGenerationPerType extends Command {
     }),
     prodtype : flags.string({
       description: 'Give Generation Type',
-      default : 'AllTypes'
+      default : 'AllTypes',
+      options:['Fossil Gas','Hydro Run-of-river and poundage','Hydro Pumped Storage','Hydro Water Reservoir','Fossil Hard coal','Nuclear','Fossil Brown coal/Lignite','Fossil Oil','Fossil Oil shale','Biomass','Fossil Peat','Wind Onshore','Other','Wind Offshore','Fossil Coal-derived gas','Waste','Solar','Geothermal','Other renewable','Marine','AC Link','Transformer','DC Link','Substation','AllTypes']
     })
 
   }

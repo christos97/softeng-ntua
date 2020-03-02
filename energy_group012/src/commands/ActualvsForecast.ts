@@ -1,13 +1,13 @@
 import {Command, flags} from '@oclif/command'
 import {catchError} from '../catchError'
 import { isLoggedIn , setHeader, checkDate } from '../someChecks'
-
+import { sslPath } from '../path'
 const https = require('https')
 const axios = require ('axios')
 const chalk = require ('chalk')
 const fs = require('fs');
 
-const client_cert = fs.readFileSync('/home/xsrm/Desktop/softeng-ntua-master/energy_group012/SSL/ca-crt.pem')
+const client_cert = sslPath()
 axios.defaults.httpsAgent = new https.Agent({ca : client_cert})
 const base_url = 'https://localhost:8765/energy/api'
 

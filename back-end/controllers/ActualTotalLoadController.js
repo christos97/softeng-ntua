@@ -37,7 +37,6 @@ exports.GetDate= (req, res) => {
     else{ // format will be equal to json or undefined or random string
       res.setHeader('Content-Type', 'application/json');
       cursor.toArray((error, result) => {
-        //console.log(result)
 
         if(result.length==0) {
           return res.status(403).send('Error 403 : No data')} 
@@ -82,7 +81,6 @@ exports.GetDate= (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
     cursor.toArray((error, result) => {
-      console.log(result)
       if(result.length==0) {
         return res.status(403).json({
             error:'Error 403 : No data'
@@ -170,7 +168,6 @@ exports.GetDate= (req, res) => {
 /* JSON response here*/
       else{ // format will be json or undefined or random string
       res.setHeader('Content-Type', 'application/json');
-      console.log(cursor)
       cursor.toArray((error, result) => {
         if(result.length==0) {
           return res.status(403).send('Error 403 : No data')} 

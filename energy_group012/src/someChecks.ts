@@ -34,6 +34,7 @@ export function checkDate(date : String   ) {
     process.exit(0)
   }
 
+  if (parseInt(date.slice(0,4)) > 2020) exit()
   if (date.length < 4 && date.length != 0) exit()
   if (date.match(/[a-z]/i)) exit()
   let count = (date.match(/-/g)||[]).length
@@ -42,7 +43,7 @@ export function checkDate(date : String   ) {
   if ((date.length == 4 && count!= 0 ) ) exit()
   if (date.length == 7 && count!= 1 ) exit()
   if (date.length == 10 && count!= 2 ) exit()
-
+  if ( parseInt(date[5]) > 1 || parseInt(date[6]) == 0 || parseInt(date[8]) > 3 || parseInt(date[9]) == 0 ) exit()
 }
 
 export function loginChecks(password : any){

@@ -34,18 +34,14 @@ module.exports ={
             AreaName: '$AreaName',
             AreaTypeCodeId: '$AreaTypeCodeId',
             AreaCodeId: '$AreaCodeId',
-            ResolutionCodeId: '$ResolutionCodeId',
             MapCodeId: '$MapCodeId',
-            ProductionTypeId: '$ProductionTypeId'
-        },
-        DateTime: {
-            $first: '$DateTime'
+            ProductionTypeId: '$ProductionTypeId',
+            DateTime:'$DateTime' ,
+            UpdateTime:  '$UpdateTime'
+            
         },
         ActualGenerationOutputValue: {
             $first: '$ActualGenerationOutput'
-        },
-        UpdateTime: {
-            $first: '$UpdateTime'
         }
     }
 }, {
@@ -100,14 +96,14 @@ module.exports ={
             $toInt: '$_id.Day'
         },
         DateTimeUTC: {
-            $toDate: '$DateTime'
+            $toDate: '$_id.DateTime'
         },
         ProductionType: '$Production_Type.ProductionTypeText',
         ActualGenerationOutputValue: {
             $toDouble: '$ActualGenerationOutputValue'
         },
         UpdateTimeUTC: {
-            $toDate: '$UpdateTime'
+            $toDate: '$_id.UpdateTime'
         }
     }
 }, {
@@ -610,4 +606,4 @@ module.exports ={
            return Q
     }
 },
-}// export module ends here
+}

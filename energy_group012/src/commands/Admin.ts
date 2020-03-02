@@ -157,7 +157,6 @@ export default class Admin extends Command {
       if (user) console.log(chalk.green("User Created"))
     }
     catch (err) {
-      //console.log('hey')
       catchError(err)
     }
   }
