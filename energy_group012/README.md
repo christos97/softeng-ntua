@@ -13,14 +13,12 @@ energy_group012
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g energy_group012
-$ energy_group012 COMMAND
-running command...
-$ energy_group012 (-v|--version|version)
-energy_group012/0.0.0 linux-x64 node-v12.16.0
+$ cd energy_group012 && sudo npm install --save && sudo npm link
+$ energy_group012 [COMMAND]
+$ energy_group012 --help
 $ energy_group012 --help [COMMAND]
 USAGE
-  $ energy_group012 COMMAND
+  $ energy_group012 COMMAND --flag1 value1 --flag2 value2 ...
 ...
 ```
 <!-- usagestop -->
@@ -82,15 +80,17 @@ USAGE
   $ energy_group012 Admin
 
 OPTIONS
-  -h, --help               show CLI help
-  --email=email            Required
-  --moduser=moduser        Modify user
-  --newdata=newdata
-  --newuser=newuser        Create new user
-  --passw=passw            Required , no spaces allowed
-  --quota=quota            Add user quota
-  --source=source
-  --userstatus=userstatus  Check userstatus
+  -h, --help                                 show CLI help
+  
+  --newuser newuser && --moduser moduser     Create / Modify user
+    --email email                            Unique,Required
+    --passw passw                            Unique,Required
+    --quota quota                            Add/Modify user quota
+  
+  --newdata newdata
+    --source source
+  
+  --userstatus userstatus                    Check userstatus
 ```
 
 _See code: [src/commands/Admin.ts](https://github.com/christos97/softeng-ntua/blob/v0.0.0/src/commands/Admin.ts)_

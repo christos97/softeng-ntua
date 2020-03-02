@@ -1,6 +1,4 @@
 import {Command, flags} from '@oclif/command'
-import { userInfo, type } from 'os'
-import { format } from 'path'
 import {catchError} from '../catchError'
 import { isLoggedIn , setHeader, checkDate } from '../someChecks'
 
@@ -36,10 +34,9 @@ export default class ActualvsForecast extends Command {
     })
   }
 
-
   async run() {
 
-    const {args, flags} = this.parse(ActualvsForecast)
+    const {flags} = this.parse(ActualvsForecast)
 
       let token = isLoggedIn()
       setHeader(token)
@@ -61,24 +58,24 @@ export default class ActualvsForecast extends Command {
 
         if (count == 2) {
           let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/date/${_date}`
-          axios
-          .get(url,options)
-          .then(( response : any ) => console.log(response.data) )
-          .catch(( err : any ) => catchError(err) )
-        }
+          try{
+            const response = await axios(url,options)
+            console.log(response.data)
+          }
+          catch (err) { catchError(err) } }
         else if (count == 1){
           let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/month/${_date}`
-          axios
-          .get(url,options)
-          .then(( response : any ) => console.log(response.data) )
-          .catch(( err : any ) => catchError(err) )
-        }
+          try{
+            const response = await axios(url,options)
+            console.log(response.data)
+          }
+          catch (err) { catchError(err) } }
         else {
           let url : String = `${base_url}/${dataset}/${areaName}/${Resolution}/year/${_date}`
-          axios
-          .get(url,options)
-          .then(( response : any ) => console.log(response.data) )
-          .catch(( err : any ) => catchError(err) )
-        }
+          try{
+            const response = await axios(url,options)
+            console.log(response.data)
+          }
+          catch (err) { catchError(err) } }
       }
   }

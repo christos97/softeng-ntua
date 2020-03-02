@@ -2,7 +2,11 @@ const chalk = require ('chalk')
 
 export function catchError(err : any){
 
-  if (err.response == 'undefined') {
+  if (err == null ){
+    console.error('Check Server')
+    process.exit(-1)
+  }
+  if (err.response == null) {
     console.error('Check Server')
     process.exit(-1)
   }
@@ -26,7 +30,7 @@ export function catchError(err : any){
   }
 
   if( status == 401  ){
-    console.error(chalk.red(`Error 401 : Authorization Failed`))
+    console.error(chalk.red('Error 401 : Authorization Failed'))
     process.exit(401)
   }
 

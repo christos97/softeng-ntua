@@ -1,8 +1,5 @@
 import {Command, flags} from '@oclif/command'
-import { userInfo, type } from 'os'
-import { format } from 'path'
 import {catchError} from '../catchError'
-import { cli } from 'cli-ux'
 import { isLoggedIn , setHeader, checkDate } from '../someChecks'
 const https = require('https')
 const axios = require ('axios')

@@ -150,12 +150,14 @@ export default class Admin extends Command {
       quota : `${flags.quota}`
     })
 
+
     checkRequiredFields(body)
     try {
       const user = await axios.post(`${base_url}/Admin/users`,body)
       if (user) console.log(chalk.green("User Created"))
     }
     catch (err) {
+      //console.log('hey')
       catchError(err)
     }
   }
@@ -165,7 +167,7 @@ export default class Admin extends Command {
     if (`${flags.userstatus}`!== 'undefined'){
       try {
         const  user = await axios.get(`${base_url}/Admin/users/${flags.userstatus}`)
-        console.log(user.data)
+        if (user) console.log(user.data)
       }
       catch (err) {
         catchError(err)
