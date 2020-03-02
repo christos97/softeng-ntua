@@ -329,11 +329,40 @@ console.log('\n')
         res.body[0].should.have.property('ResolutionCode').that.is.a('string').equal('PT15M')
         res.body[0].should.have.property('Year').that.is.a('number').equal(2018)
         res.body[0].should.have.property('Month').that.is.a('number').equal(1)
+        res.body[0].should.have.property('DayAheadTotalLoadForecastByDayValue').that.is.a('number')
         done()
     })
 })
 
 console.log('\n')
+/*---------------------------------------------------------------------------------------------------*/
+
+
+  // GET YEAR
+
+it(chalk.cyan('Use Case 2 | 3.c:')+' GET /DayAheadTotalLoadForecast/Germany/PT15M/year/2018', (done) => {
+    chai.request(server)
+    .get('/energy/api/DayAheadTotalLoadForecast/Germany/PT15M/year/2018')
+    .set('x-observatory-auth', user_token)
+    .send()
+    .end((err, res) => {
+        res.should.exist
+        res.should.have.status(200)
+        res.body.should.not.be.null
+        res.body.should.be.an('array')
+        res.body[0].should.have.property('Source').that.is.a('string').equal('entso-e')
+        res.body[0].should.have.property('Dataset').that.is.a('string').equal('DayAheadTotalLoadForecast')
+        res.body[0].should.have.property('AreaName').that.is.a('string').equal('Germany')
+        res.body[0].should.have.property('AreaTypeCode').that.is.a('string').equal('CTY')
+        res.body[0].should.have.property('MapCode').that.is.a('string').equal('DE')
+        res.body[0].should.have.property('ResolutionCode').that.is.a('string').equal('PT15M')
+        res.body[0].should.have.property('Year').that.is.a('number').equal(2018)
+        res.body[0].should.have.property('Month').that.is.a('number').equal(1)
+        res.body[0].should.have.property('DayAheadTotalLoadForecastByMonthValue').that.is.a('number')
+        done()
+    })
+})
+
 
 
     it(chalk.red('Error: 402') +'  Out of quota', (done) => {

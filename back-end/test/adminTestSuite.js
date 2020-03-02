@@ -110,11 +110,11 @@ describe(chalk.blue.bold('Admin: Use Case Testing\n'), () => {
         })
         // Modify User
 
-        it(chalk.cyan('Use Case 4:') + '  Modify user credentials & Set quota = 8', (done) => {
+        it(chalk.cyan('Use Case 4:') + '  Modify user credentials & Set quota = 9', (done) => {
           let user = { 
             email: "moduser@user.com",
             password : "moduser",
-            quota : '8'
+            quota : '9'
           };
           
           chai.request(server)
@@ -133,7 +133,7 @@ describe(chalk.blue.bold('Admin: Use Case Testing\n'), () => {
               .property('password').that.is.a('string')
             res.body.should.have
               .property('quota').that.is.a('string')
-              .equal('8')
+              .equal('9')
             done()
           })
         })

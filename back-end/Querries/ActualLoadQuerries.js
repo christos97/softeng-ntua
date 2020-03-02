@@ -81,20 +81,25 @@ module.exports ={
   
     Get_Month_Querry    : function(_AreaName,_Resolution,_Year,_Month,_Day){
         Q= [
-            {$match: {
+            {
+            $match: {
               AreaName: _AreaName,
               Month: _Month,
               Year: _Year
-            }}, {$lookup: {
+            }}, 
+            {$lookup: {
                   'from': 'ResolutionCode', 
                   'localField': 'ResolutionCodeId', 
                   'foreignField': 'Id', 
                   'as': 'resolution_codes'
-                }}, {$unwind: {
+                }}, 
+            {$unwind: {
               path: '$resolution_codes'
-            }}, {$match: {
+            }}, 
+            {$match: {
               'resolution_codes.ResolutionCodeText': _Resolution
-            }},{$group: {
+            }},
+            {$group: {
               _id: {
                 Day:"$Day",
                 Year:"$Year",
@@ -120,13 +125,11 @@ module.exports ={
               localField: '_id.AreaTypeCodeId',
               foreignField: 'Id',
               as: 'Area_Type_Code'
-            }}, {$unwind: {
-            
-            
-                  path:'$Area_Type_Code'
-            
-            
-                }}, {$project: {
+            }}, 
+            {$unwind: {
+                path:'$Area_Type_Code'
+            }}, 
+            {$project: {
               _id:0,
               Source: 'entso-e',
               Dataset: 'ActualTotalLoad',
@@ -145,17 +148,22 @@ module.exports ={
     },
        
     Get_Year_Querry     : function(_AreaName,_Resolution,_Year){
-         Q= [{$match: {
-            AreaName: _AreaName,
-            Year: _Year
-          }}, {$lookup: {
-                'from': 'ResolutionCode', 
-                'localField': 'ResolutionCodeId', 
-                'foreignField': 'Id', 
-                'as': 'resolution_codes'
-              }}, {$unwind: {
-            path: '$resolution_codes'
-          }}, {$match: {
+         Q= [
+             {
+                $match: {
+                    AreaName: _AreaName,
+                    Year: _Year
+            }}, {
+                $lookup: {
+                    'from': 'ResolutionCode', 
+                    'localField': 'ResolutionCodeId', 
+                    'foreignField': 'Id', 
+                    'as': 'resolution_codes'
+                }}, 
+                {
+                    $unwind: {
+                        path: '$resolution_codes'
+            }}, {$match: {
             'resolution_codes.ResolutionCodeText': _Resolution
           }},{$group: {
             _id: {
@@ -170,25 +178,27 @@ module.exports ={
             ActualTotalLoadByMonthValue: {
               $sum: {$toDouble:"$TotalLoadValue"}
             },
-          }}, {$lookup: {
+          }}, 
+          {$lookup: {
             from: 'MapCode',
             localField: '_id.MapCodeId',
             foreignField: 'Id',
             as: 'Map_Code'
-          }}, {$unwind: {
+          }}, 
+          {$unwind: {
             path: '$Map_Code'
-          }}, {$lookup: {
+          }}, 
+          {$lookup: {
             from: 'AreaTypeCode',
             localField: '_id.AreaTypeCodeId',
             foreignField: 'Id',
             as: 'Area_Type_Code'
-          }}, {$unwind: {
-          
-            
+          }}, 
+          {
+            $unwind: {
                 path:'$Area_Type_Code'
           
-          
-              }}, {$project: {
+          }}, {$project: {
             _id:0,
             Source: 'entso-e',
             Dataset: 'ActualTotalLoad',
