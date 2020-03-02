@@ -103,7 +103,7 @@ describe(chalk.blue.bold('Verified User: Use Case Testing\n'), () => {
       })
     })
     
-      it(chalk.cyan('Use Case 2:')+' GET /ActualTotalLoad/Austria/PT15M/date/2018-01-01 | 1.a.', (done) => {
+      it(chalk.cyan('Use Case 2 | 1.a:')+' GET /ActualTotalLoad/Austria/PT15M/date/2018-01-01', (done) => {
         chai.request(server)
         .get('/energy/api/ActualTotalLoad/Austria/PT15M/date/2018-01-01')
         .set('x-observatory-auth', user_token)
@@ -122,9 +122,9 @@ describe(chalk.blue.bold('Verified User: Use Case Testing\n'), () => {
             res.body[0].should.have.property('Year').that.is.a('number').equal(2018)
             res.body[0].should.have.property('Month').that.is.a('number').equal(1)
             res.body[0].should.have.property('Day').that.is.a('number').equal(1)
-           // res.body[0].should.have.property('DateTimeUTC').that.is.a('timestamp')
-            res.body[0].should.have.property('ActualTotalLoadValue').that.is.a('number')
-        // res.body[0].should.have.property('UpdateTimeUTC').that.is.a('timestamp').equal('2018-01-01T10:45:00.000Z')
+            res.body[0].should.have.property('DateTimeUTC').that.is.a('string')
+            res.body[0].should.have.property('ActualTotalLoadValue').that.is.a('number').equal(7398.8)
+            res.body[0].should.have.property('UpdateTimeUTC').that.is.a('string')
             done()
         })
     })

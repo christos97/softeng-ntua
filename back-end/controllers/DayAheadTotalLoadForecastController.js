@@ -114,7 +114,7 @@ exports.GetYear = (req, res) => {
   // simple counter to count all requests for specific user
   
   const _Year = req.params.Year
-  if (_Year.length > 4 ) return res.status(400).send()
+  if (_Year.length < 4 ) return res.status(400).send()
     const _AreaName = req.params.AreaName
     const _Resolution = req.params.Resolution  
     const collection = db.collection('DayAheadTotalLoadForecast')

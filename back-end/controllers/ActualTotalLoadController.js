@@ -4,7 +4,6 @@ const {Parser}           =  require('json2csv')
 exports.GetDate= (req, res) => {
   if( (/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/.test(req.params._date_str)) == false ){
     return res.status(400).json({"Bad request":"Date should be in YYYY-MM-DD format" })}
-    console.log("here")
     let _AreaName   = req.params.AreaName
     let _Resolution = req.params.Resolution 
     let _date_str   = req.params._date_str.split("-")
