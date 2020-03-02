@@ -61,7 +61,7 @@
     "postpack": "rm -f oclif.manifest.json",
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
     "test":
-    "mocha 'test/**/HealthCheck.test.ts' && mocha 'test/**/Login.test.ts' && mocha 'test/**/Admin.test.ts' && mocha 'test/**/Logout.test.ts' && mocha 'test/**/Dataset.test.ts' && mocha 'test/**/Errors.test.ts' && mocha 'test/**/Logout.test.ts'",
+    "mocha 'test/**/HealthCheck.test.ts' && mocha 'test/**/Login.test.ts' && mocha 'test/**/Admin.test.ts' && mocha 'test/**/Logout.test.ts' && mocha 'test/**/Dataset.test.ts' &&  mocha 'test/**/Logout.test.ts'",
     "version": "oclif-dev readme && git add README.md"
   },
   "types": "lib/index.d.ts"
