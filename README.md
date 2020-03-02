@@ -13,34 +13,30 @@ Rest API and a simple CLI 'energy_group012' to invoke it.
 
 # Server
 
-Before using the CLI be sure server is up and running.
+Clone into repository and type.
 <!-- server -->
 ```sh-session
-$ cd back-end
-$ npm start
+$ chmod +x setupServer.sh
+$ ./setupServer.sh
 ```
 <!-- serverstop -->
 
 # Usage
-Install globally and link, to invoke CLI from anywhere in the terminal. 
+Open a new terminal , go to repository folder and type
 <!-- usage -->
 ```sh-session
-$ npm install -g energy_group012 // not published to npm so it wont do anything
-$ cd energy_group012
-$ npm link
+$ chmod +x setupCLI.sh
+$ ./setupCLI.sh 
 
-for help :
-$ energy_group012 --help 
+You should be able to run
+
+  $ energy_group012 --help
+  $ energy_group012 --help [COMMAND] 
+
+globally.
 
 USAGE
-  $ energy_group012 [Command] --param1 value1 --param2 value2
+  $ energy_group012 [Command] --flag1 value1 --flag2 value2
 ...
 ```
-<!-- usagestop -->
-# Commands
-<!-- commands -->
-Login |
-Logout |
-Admin |
-{Dataset}
 
