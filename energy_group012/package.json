@@ -10,7 +10,7 @@
     "@oclif/command": "^1.5.19",
     "@oclif/config": "^1.14.0",
     "@oclif/plugin-help": "^2.2.3",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chalk": "^3.0.0",
     "csv-parser": "^2.3.2",
     "csvtojson": "^2.0.10",
